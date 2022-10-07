@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.kotlin.kapt'
     id 'kotlin-parcelize'
+    id 'com.google.dagger.hilt.android'
 }
 
 android {
@@ -52,6 +53,9 @@ dependencies {
 
     def nav_version = "2.5.2"
 
+    implementation "com.google.dagger:hilt-android:2.44"
+    kapt "com.google.dagger:hilt-compiler:2.44"
+
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
@@ -99,4 +103,8 @@ dependencies {
     implementation "androidx.room:room-paging:2.5.0-alpha03"
  */
 
+}
+
+kapt {
+    correctErrorTypes true
 }
