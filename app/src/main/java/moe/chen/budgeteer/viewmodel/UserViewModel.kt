@@ -26,7 +26,10 @@ class UserViewModel @Inject constructor(
     private var currentUserFlow: Flow<User?> = flow { }
 
     init {
-        Log.d("UserViewModel", "initializing new view model, source: ${Arrays.toString(Thread.currentThread().stackTrace)}")
+        Log.d(
+            "UserViewModel",
+            "initializing new view model, source: ${Arrays.toString(Thread.currentThread().stackTrace)}"
+        )
 
         viewModelScope.launch(Dispatchers.IO) {
             preferenceRepository.currentUserFlow
@@ -59,7 +62,7 @@ class UserViewModel @Inject constructor(
         user: User,
         onSuccess: (Long) -> Unit,
         onError: () -> Unit,
-    ) = viewModelScope.launch(Dispatchers.IO) {
+    ) = viewModelScope.launch {
         try {
             val id = userRepository.createUser(user)
             onSuccess(id)
