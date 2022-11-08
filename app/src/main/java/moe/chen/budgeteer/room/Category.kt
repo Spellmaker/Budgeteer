@@ -1,14 +1,7 @@
-package moe.chen.budgeteer.data
+package moe.chen.budgeteer.room
 
-import androidx.room.ColumnInfo
-import androidx.room.Dao
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Index
-import androidx.room.Insert
-import androidx.room.PrimaryKey
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 @Entity(
     foreignKeys = [
@@ -38,7 +31,10 @@ data class Category(
 @Dao
 interface CategoryDao {
     @Query("SELECT * FROM category WHERE uid = :uid")
-    suspend fun listCategories(uid: Int): List<Category>
+    fun listCategories(uid: Int): Flow<List<Category>>
+
+    @Query("SELECT * FROM category WHERE cid = :cid")
+    fun findCategory(cid: Int): Flow<Category>
 
     @Insert
     suspend fun createCategory(category: Category): Long

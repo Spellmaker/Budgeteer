@@ -1,6 +1,7 @@
-package moe.chen.budgeteer.data
+package moe.chen.budgeteer.room
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime
 
 @Entity(
@@ -23,17 +24,24 @@ data class BudgetEntry(
 @Dao
 interface BudgetEntryDao {
     @Insert
-    fun createEntry(entry: BudgetEntry)
+    suspend fun createEntry(entry: BudgetEntry)
 
     @Delete
-    fun deleteEntry(entry: BudgetEntry)
+    suspend fun deleteEntry(entry: BudgetEntry)
+
+    @Query("SELECT * FROM budgetentry " +
+            "WHERE cid = :cid ")
+    fun listEntries(cid: Int): Flow<List<BudgetEntry>>
 
     @Query("SELECT * FROM budgetentry " +
             "WHERE cid = :cid " +
             "AND strftime('%m', date) = :month")
-    fun internalListEntries(cid: Int, month: String): List<BudgetEntry>
+    fun internalListEntries(cid: Int, month: String): Flow<List<BudgetEntry>>
 
-    fun listEntries(cid: Int, month: Int): List<BudgetEntry> {
+    @Query("SELECT * FROM budgetentry")
+    suspend fun findAllEntries(): List<BudgetEntry>
+
+    fun listEntries(cid: Int, month: Int): Flow<List<BudgetEntry>> {
         val actualMonth = if (month < 10) {
             "0$month"
         } else {

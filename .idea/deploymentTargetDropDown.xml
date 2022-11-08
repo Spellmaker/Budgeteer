@@ -7,11 +7,11 @@
         <deviceKey>
           <Key>
             <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\Spellmaker\.android\avd\Pixel_2_API_30.avd" />
+            <value value="C:\Users\Spellmaker\.android\avd\Copy_of_Pixel_2_API_30.avd" />
           </Key>
         </deviceKey>
       </Target>
     </targetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2022-10-04T08:13:38.374390200Z" />
+    <timeTargetWasSelectedWithDropDown value="2022-11-06T18:42:53.600411100Z" />
   </component>
 </project>
