@@ -1,14 +1,15 @@
 package moe.chen.budgeteer.screens
 
+import androidx.compose.foundation.background
+import androidx.compose.material.Surface
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -79,37 +80,36 @@ fun InputWidget(
             TextField(
                 value = defaultNumberFormat.format(amount),
                 onValueChange = setAmount,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(5.dp),
                 label = { Text("Amount") },
                 singleLine = true,
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
-        Row {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             Column(modifier = Modifier.weight(1f, true)) {
-                Row {
+                Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
                     AmountButton(amount = -10.0, changeAmount = changeAmount)
                     AmountButton(amount = -5.0, changeAmount = changeAmount)
-                }
-                Row {
                     AmountButton(amount = -1.0, changeAmount = changeAmount)
-                    AmountButton(amount = -0.5, changeAmount = changeAmount)
                 }
-                Row {
+                Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+                    AmountButton(amount = -0.5, changeAmount = changeAmount)
                     AmountButton(amount = -0.1, changeAmount = changeAmount)
                     AmountButton(amount = -0.01, changeAmount = changeAmount)
                 }
             }
             Column(modifier = Modifier.weight(1f, true)) {
-                Row {
+                Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
                     AmountButton(amount = 10.0, changeAmount = changeAmount)
                     AmountButton(amount = 5.0, changeAmount = changeAmount)
-                }
-                Row {
                     AmountButton(amount = 1.0, changeAmount = changeAmount)
-                    AmountButton(amount = 0.5, changeAmount = changeAmount)
                 }
-                Row {
+                Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+                    AmountButton(amount = 0.5, changeAmount = changeAmount)
                     AmountButton(amount = 0.1, changeAmount = changeAmount)
                     AmountButton(amount = 0.01, changeAmount = changeAmount)
                 }
@@ -118,10 +118,10 @@ fun InputWidget(
         Spacer(modifier = Modifier.height(10.dp))
         Row {
             Column {
-                Button(onClick = createEntry, modifier = Modifier.fillMaxWidth()) {
+                Button(onClick = createEntry, modifier = Modifier.fillMaxWidth().padding(5.dp)) {
                     Text("Submit")
                 }
-                Button(onClick = abort, modifier = Modifier.fillMaxWidth()) {
+                Button(onClick = abort, modifier = Modifier.fillMaxWidth().padding(5.dp)) {
                     Text("Abort")
                 }
             }
@@ -131,10 +131,30 @@ fun InputWidget(
 
 @Composable
 fun AmountButton(amount: Double, changeAmount: (Double) -> Unit) {
-    Button(
-        onClick = { changeAmount(amount) },
-        shape = CircleShape,
+    Surface(
+        shape = MaterialTheme.shapes.small,
+        border = ButtonDefaults.outlinedBorder,
+        modifier = Modifier
+            .width(60.dp)
+            .height(40.dp)
+            .padding(2.dp)
+
     ) {
-        Text(formatCompact(amount), fontSize = 12.sp)
+        Row(
+            modifier = Modifier.background(MaterialTheme.colors.primary),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                formatCompact(amount),
+                fontSize = 12.sp,
+                modifier = Modifier
+                    .clickable(onClick = { changeAmount(amount) }
+                    )
+                    .padding(5.dp)
+                    .background(MaterialTheme.colors.primary),
+                color = MaterialTheme.colors.onPrimary
+            )
+        }
     }
 }

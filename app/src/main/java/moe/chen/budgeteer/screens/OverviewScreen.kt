@@ -123,7 +123,7 @@ fun CategoryRow(
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = { clicked() },
-                    onLongPress = {  longPress() }
+                    onLongPress = { longPress() }
                 )
             }
         ,

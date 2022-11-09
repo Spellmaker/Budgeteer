@@ -17,5 +17,9 @@ val defaultCompactFormat: NumberFormat = run {
     format
 }
 
-fun formatCompact(value: Double) = "${defaultCompactFormat.format(value)}€"
+fun formatCompact(value: Double) = if (value <= 0) {
+    defaultCompactFormat.format(value)
+} else {
+    "+${defaultCompactFormat.format(value)}"
+}
 

@@ -18,16 +18,42 @@ data class User(
     @ColumnInfo(name = "username") val username: String,
     @ColumnInfo(name = "secret") val secret: String,
 ) {
+
     override fun equals(other: Any?): Boolean {
         Log.d(
             "User",
             "comparing $this with $other (${System.identityHashCode(this)} with ${
                 System.identityHashCode(other)
-            })"
+            }) result is ${super.equals(other)}"
         )
-        return super.equals(other)
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as User
+
+        if (uid != other.uid) return false
+        if (username != other.username) return false
+        if (secret != other.secret) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = uid ?: 0
+        result = 31 * result + username.hashCode()
+        result = 31 * result + secret.hashCode()
+        return result
     }
 }
+
+/*
+
+    override fun equals(other: Any?): Boolean {
+
+
+        return super.equals(other)
+    }
+ */
 
 @Dao
 interface UserDao {

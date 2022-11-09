@@ -4,8 +4,10 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import moe.chen.budgeteer.data.PreferenceRepository
@@ -19,11 +21,10 @@ class UserViewModel @Inject constructor(
     private val preferenceRepository: PreferenceRepository,
     private val userRepository: UserRepository,
 ) : ViewModel() {
-    private val _validatedUserFlow = MutableStateFlow<User?>(null)
+    private val _preferenceUser = MutableStateFlow<User?>(null)
+    private val _validatedUser = MutableStateFlow<User?>(null)
 
-    val validUser = _validatedUserFlow.asStateFlow()
-
-    private var currentUserFlow: Flow<User?> = flow { }
+    fun validateCurrentUser() = _validatedUser.asStateFlow()
 
     init {
         Log.d(
@@ -31,29 +32,28 @@ class UserViewModel @Inject constructor(
             "initializing new view model, source: ${Arrays.toString(Thread.currentThread().stackTrace)}"
         )
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             preferenceRepository.currentUserFlow
                 .distinctUntilChanged()
                 .collect { user ->
-                    Log.d("UserViewModel", "something emitted user $user")
-                    if (user == null) {
-                        // flow becomes a new flow emitting just null
-                        updateFlow(flow { emit(null) })
-                    } else {
-                        updateFlow(userRepository.findUser(user.username, user.secret))
+                    Log.d(
+                        "UserViewModel",
+                        "updating from preference repository with $user"
+                    )
+                    _preferenceUser.value = user
+                    if (user != null) {
+                        launch {
+                            userRepository.findUser(user.username, user.secret)
+                                .takeWhile {
+                                    user.username == _preferenceUser.value?.username
+                                            && user.secret == _preferenceUser.value?.secret
+                                }
+                                .collect {
+                                    Log.d("UserViewModel", "new auth user $it")
+                                    _validatedUser.value = it
+                                }
+                        }
                     }
-                }
-        }
-    }
-
-    private fun updateFlow(usersFlow: Flow<User?>) {
-        currentUserFlow = usersFlow
-        viewModelScope.launch(Dispatchers.IO) {
-            usersFlow
-                .distinctUntilChanged()
-                .takeWhile { usersFlow == currentUserFlow }
-                .collect { user ->
-                    _validatedUserFlow.value = user
                 }
         }
     }

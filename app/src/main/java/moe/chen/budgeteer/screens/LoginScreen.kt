@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import moe.chen.budgeteer.navigation.BudgeteerScreens
 import moe.chen.budgeteer.room.User
@@ -19,17 +20,25 @@ import moe.chen.budgeteer.viewmodel.UserViewModel
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    userViewModel: UserViewModel,
     navController: NavController,
 ) {
+    val userViewModel = hiltViewModel<UserViewModel>()
+    var previousUser by remember { mutableStateOf<User?>(null) }
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    val validUser = userViewModel.validUser.collectAsState()
+    val validUser = userViewModel.validateCurrentUser().collectAsState(initial = null)
     val context = LocalContext.current
 
     if (validUser.value != null) {
         Log.d("login", "valid user was found!")
-        navController.navigate(BudgeteerScreens.OverviewScreen.name)
+        if (previousUser == null) {
+            previousUser = validUser.value
+            Log.d("login", "navigating due to new user ${validUser.value}")
+            navController.navigate(BudgeteerScreens.OverviewScreen.name)
+        } else {
+            Log.d("login",
+                "not navigating, new user ${validUser.value} is equal to $previousUser")
+        }
     } else {
         Log.d("login", "valid user was not found!")
         LoginWidget(

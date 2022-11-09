@@ -41,9 +41,11 @@ class PreferenceRepository @Inject constructor(
         dataStore.edit { preferences ->
             Log.d("PreferenceRepository", "editing to reflect $user")
             if (user == null) {
+                Log.d("PreferenceRepository", "null case")
                 preferences.minusAssign(Keys.UserKey)
                 preferences.minusAssign(Keys.SecretKey)
             } else {
+                Log.d("PreferenceRepository", "edit case")
                 preferences[Keys.UserKey] = user.username
                 preferences[Keys.SecretKey] = user.secret
             }

@@ -31,15 +31,17 @@ class OverviewViewModel @Inject constructor(
         entryDao.listEntries(category.cid!!, ZonedDateTime.now().monthValue)
 
     fun listenForUser(user: User) {
-        viewModelScope.launch {
-            selectedUser = user
-            categoryDao.listCategories(user.uid!!)
-                .takeWhile { selectedUser?.uid == user.uid }
-                .distinctUntilChanged()
-                .collect { entries ->
-                    Log.d("OverviewViewModel", "listen for user $user")
-                    _categories.value = entries
-                }
+        if (user != this.selectedUser) {
+            viewModelScope.launch {
+                selectedUser = user
+                categoryDao.listCategories(user.uid!!)
+                    .takeWhile { selectedUser?.uid == user.uid }
+                    .distinctUntilChanged()
+                    .collect { entries ->
+                        Log.d("OverviewViewModel", "listen for user $user")
+                        _categories.value = entries
+                    }
+            }
         }
     }
 }
