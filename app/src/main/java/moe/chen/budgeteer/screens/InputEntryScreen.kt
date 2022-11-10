@@ -135,8 +135,8 @@ fun AmountButton(amount: Double, changeAmount: (Double) -> Unit) {
         shape = MaterialTheme.shapes.small,
         border = ButtonDefaults.outlinedBorder,
         modifier = Modifier
-            .width(60.dp)
-            .height(40.dp)
+            .width(64.dp)
+            .height(50.dp)
             .padding(2.dp)
 
     ) {
