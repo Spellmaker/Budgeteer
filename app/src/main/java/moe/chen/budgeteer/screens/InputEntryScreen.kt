@@ -28,31 +28,34 @@ fun InputEntryScreen(
     categoryId: Int,
     logout: () -> Unit,
 ) {
-    var amount = remember { mutableStateOf(0.0) }
+    val amount = remember { mutableStateOf(0.0) }
     val model = hiltViewModel<InputEntryViewModel>()
     model.listenForCategory(categoryId)
     val category = model.category.collectAsState()
 
     MainViewWidget(logout = logout) {
-        InputWidget(
-            category = category.value,
-            amount = amount.value,
-            setAmount = {
-                try {
-                    amount.value = defaultNumberFormat.parse(it)!!.toDouble()
-                } catch (_: Throwable) {
+        /* skip initial loading resulting in a wonky screen */
+        if (category.value != null) {
+            InputWidget(
+                category = category.value,
+                amount = amount.value,
+                setAmount = {
+                    try {
+                        amount.value = defaultNumberFormat.parse(it)!!.toDouble()
+                    } catch (_: Throwable) {
 
+                    }
+                },
+                changeAmount = { amount.value += it },
+                abort = {
+                    navController.popBackStack()
+                },
+                createEntry = {
+                    model.addEntry(amount.value)
+                    navController.popBackStack()
                 }
-            },
-            changeAmount = { amount.value += it },
-            abort = {
-                navController.popBackStack()
-            },
-            createEntry = {
-                model.addEntry(amount.value)
-                navController.popBackStack()
-            }
-        )
+            )
+        }
     }
 }
 
