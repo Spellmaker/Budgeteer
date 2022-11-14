@@ -15,10 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.flow.Flow
+import moe.chen.budgeteer.R
 import moe.chen.budgeteer.data.*
 import moe.chen.budgeteer.navigation.BudgeteerScreens
 import moe.chen.budgeteer.preview.exampleCategories
@@ -63,10 +65,10 @@ fun OverviewScreen(
                 navController
                     .navigate("${BudgeteerScreens.CategoryScreen.name}/${it.cid!!}")
             },
-            formatter = { (converter.value?.format(it) ?: "Nooo") },
+            formatter = { (converter.value?.format(it) ?: it.toString()) },
             accessSettings = accessSettings,
             fields = allCategories.map { it to it.extractor(settings.value!!) }
-                .filter { it.second >= 0}
+                .filter { it.second >= 0 }
                 .sortedBy { it.second }
                 .map { it.first }
         )
@@ -102,7 +104,7 @@ fun OverviewWidget(
                     .fillMaxWidth()
                     .padding(4.dp)
             ) {
-                Text("Add new category")
+                Text(stringResource(R.string.operation_add_category))
             }
         }
     }
@@ -206,7 +208,7 @@ fun CategorySummary(
 
     Row(modifier = Modifier.padding(5.dp)) {
         Column {
-            computed.forEach { Text(it.third.label, color = it.second) }
+            computed.forEach { Text(stringResource(it.third.label), color = it.second) }
         }
         Spacer(modifier = Modifier.width(10.dp))
 

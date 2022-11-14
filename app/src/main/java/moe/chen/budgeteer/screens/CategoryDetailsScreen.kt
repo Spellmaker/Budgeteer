@@ -55,7 +55,10 @@ fun CategoryDetailsScreen(
                 Spacer(modifier = Modifier.height(10.dp))
                 LazyColumn {
                     items(items = entries.value.sortedByDescending { it.date }) {
-                        ExpenseWidget(it, { model.removeEntry(it) }, { convertDefault.value?.format(it) ?: "Noooo" })
+                        ExpenseWidget(
+                            it,
+                            { model.removeEntry(it) },
+                            { n -> convertDefault.value?.format(n) ?: n.toString() })
                     }
                 }
             }

@@ -11,11 +11,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import moe.chen.budgeteer.R
 import moe.chen.budgeteer.formatCompact
 import moe.chen.budgeteer.room.Category
 import moe.chen.budgeteer.room.User
@@ -62,7 +64,7 @@ fun InputEntryScreen(
                     navController.popBackStack()
                 },
                 formatter = {
-                    converterDefault.value?.format(it) ?: "N"
+                    converterDefault.value?.format(it) ?: it.toString()
                 },
                 formatterCompact = {
                     formatCompact(it)
@@ -101,7 +103,7 @@ fun InputWidget(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(5.dp),
-                label = { Text("Amount") },
+                label = { Text(stringResource(R.string.label_amount)) },
                 singleLine = true,
             )
         }
@@ -155,14 +157,14 @@ fun InputWidget(
                         .fillMaxWidth()
                         .padding(5.dp)
                 ) {
-                    Text("Submit")
+                    Text(stringResource(R.string.operation_submit))
                 }
                 Button(
                     onClick = abort, modifier = Modifier
                         .fillMaxWidth()
                         .padding(5.dp)
                 ) {
-                    Text("Abort")
+                    Text(stringResource(R.string.operation_cancel))
                 }
             }
         }

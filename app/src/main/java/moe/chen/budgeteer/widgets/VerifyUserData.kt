@@ -5,8 +5,10 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import moe.chen.budgeteer.R
 import moe.chen.budgeteer.navigation.BudgeteerScreens
 import moe.chen.budgeteer.room.User
 import moe.chen.budgeteer.viewmodel.UserViewModel
@@ -30,7 +32,7 @@ fun VerifyUserData(
         subWidget(user.value!!, logout)
     } else {
         Button(onClick = logout) {
-            Text("Logout")
+            Text(stringResource(R.string.operation_logout))
         }
     }
 }

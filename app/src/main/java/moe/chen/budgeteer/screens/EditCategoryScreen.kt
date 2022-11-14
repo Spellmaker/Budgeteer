@@ -8,19 +8,21 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import moe.chen.budgeteer.R
 import moe.chen.budgeteer.navigation.BudgeteerScreens
 import moe.chen.budgeteer.room.User
 import moe.chen.budgeteer.viewmodel.AddCategoryViewModel
+import moe.chen.budgeteer.viewmodel.UserSettingViewModel
 import moe.chen.budgeteer.widgets.MainViewWidget
-import java.text.NumberFormat
-import java.util.*
 
 @Composable
 fun EditCategoryScreen(
@@ -33,34 +35,40 @@ fun EditCategoryScreen(
     val label = remember { mutableStateOf<String>("") }
     val budget = remember { mutableStateOf<Double>(0.0) }
 
-    val format = NumberFormat.getCurrencyInstance()
-    format.currency = Currency.getInstance("EUR")
-    format.maximumFractionDigits = 2
+    val settingsModel = hiltViewModel<UserSettingViewModel>()
+    settingsModel.listenToUser(user)
+
+    val convertDefault = settingsModel.converterDefault.collectAsState()
 
     MainViewWidget(logout = logout, settings = accessSettings) {
-        Column(
-            modifier = Modifier
-                .padding(it)
-                .fillMaxWidth()
-        ) {
-            Text("Add new category", style = MaterialTheme.typography.caption)
+        if (convertDefault.value != null) {
+            Column(
+                modifier = Modifier
+                    .padding(it)
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    stringResource(R.string.add_new_category),
+                    style = MaterialTheme.typography.caption
+                )
 
-            EditWidget(
-                label = label.value,
-                updateLabel = { newLabel -> label.value = newLabel },
-                budget = format.format(budget.value),
-                updateBudget = { newBudget ->
-                    try {
-                        budget.value = format.parse(newBudget)!!.toDouble()
-                    } catch(t: Throwable) {
-                        // noop
+                EditWidget(
+                    label = label.value,
+                    updateLabel = { newLabel -> label.value = newLabel },
+                    budget = convertDefault.value?.format(budget.value) ?: budget.toString(),
+                    updateBudget = { newBudget ->
+                        try {
+                            budget.value = convertDefault.value?.parse(newBudget)!!.toDouble()
+                        } catch (t: Throwable) {
+                            // noop
+                        }
+                    },
+                    create = {
+                        viewModel.addCategory(label.value, budget.value, user.uid!!)
+                        navController.navigate(BudgeteerScreens.OverviewScreen.name)
                     }
-                },
-                create = {
-                    viewModel.addCategory(label.value, budget.value, user.uid!!)
-                    navController.navigate(BudgeteerScreens.OverviewScreen.name)
-                }
-            )
+                )
+            }
         }
     }
 }
@@ -78,7 +86,7 @@ fun EditWidget(
         singleLine = true,
         value = label,
         onValueChange = updateLabel,
-        label = { Text("Category Name") },
+        label = { Text(stringResource(R.string.category_name)) },
         modifier = Modifier
             .padding(5.dp)
             .fillMaxWidth()
@@ -87,7 +95,7 @@ fun EditWidget(
         singleLine = true,
         value = budget,
         onValueChange = updateBudget,
-        label = { Text("Budget") },
+        label = { Text(stringResource(R.string.category_budget)) },
         modifier = Modifier
             .padding(5.dp)
             .fillMaxWidth(),
@@ -99,6 +107,6 @@ fun EditWidget(
             .fillMaxWidth()
             .padding(5.dp)
     ) {
-        Text("Add")
+        Text(stringResource(R.string.operation_add))
     }
 }

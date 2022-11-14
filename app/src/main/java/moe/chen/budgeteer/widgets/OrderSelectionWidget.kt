@@ -10,8 +10,10 @@ import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import moe.chen.budgeteer.R
 
 @Preview(showBackground = true)
 @Composable
@@ -52,7 +54,7 @@ fun <T> OrderSelectionWidget(
                         display(item, Modifier.padding(5.dp))
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text("Show")
+                                Text(stringResource(R.string.operation_show))
                                 Checkbox(
                                     checked = visibilities[index],
                                     onCheckedChange = {
@@ -71,7 +73,10 @@ fun <T> OrderSelectionWidget(
                                     },
                                     enabled = visibilities[index] && index >= 1
                                 ) {
-                                    Icon(Icons.Rounded.KeyboardArrowUp, "up")
+                                    Icon(
+                                        Icons.Rounded.KeyboardArrowUp,
+                                        stringResource(R.string.operation_up)
+                                    )
                                 }
                                 Button(
                                     onClick = {
@@ -85,7 +90,10 @@ fun <T> OrderSelectionWidget(
                                             && index < elements.size - 1
                                             && visibilities[index + 1]
                                 ) {
-                                    Icon(Icons.Rounded.KeyboardArrowDown, "down")
+                                    Icon(
+                                        Icons.Rounded.KeyboardArrowDown,
+                                        stringResource(R.string.operation_down)
+                                    )
                                 }
                             }
                         }

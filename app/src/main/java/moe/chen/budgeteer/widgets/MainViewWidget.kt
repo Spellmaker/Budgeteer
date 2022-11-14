@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import moe.chen.budgeteer.R
 
 @Composable
 fun MainViewWidget(
@@ -28,14 +30,14 @@ fun MainViewWidget(
                 ) {
                     Text(
                         modifier = Modifier.padding(5.dp),
-                        text = "Budgeteer$addendum",
+                        text = stringResource(R.string.application_title, addendum),
                         style = MaterialTheme.typography.h6
                     )
                     Button(onClick = settings) {
-                        Text("Settings")
+                        Text(stringResource(R.string.operation_settings))
                     }
                     Button(onClick = logout) {
-                        Text("Logout")
+                        Text(stringResource(R.string.operation_logout))
                     }
                 }
             }

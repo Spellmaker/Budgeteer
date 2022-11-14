@@ -1,7 +1,9 @@
 package moe.chen.budgeteer.data
 
 import android.util.Log
+import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color
+import moe.chen.budgeteer.R
 import moe.chen.budgeteer.room.BudgetEntry
 import moe.chen.budgeteer.room.Category
 import moe.chen.budgeteer.room.UserSetting
@@ -11,8 +13,8 @@ import java.time.LocalDateTime
 import java.time.YearMonth
 
 data class ComputedField(
-    val label: String,
-    val description: String,
+    @StringRes val label: Int,
+    @StringRes val description: Int,
     val extractor: (UserSetting) -> Int,
     val setter: (UserSetting, Int) -> UserSetting,
     val computation: (Category, List<BudgetEntry>) -> Double,
@@ -20,8 +22,8 @@ data class ComputedField(
 )
 
 val BudgetField = ComputedField(
-    label = "Budget",
-    description = "The overall budget per month",
+    label = R.string.field_budget_label,
+    description = R.string.field_budget_description,
     extractor = { it.catShowBudget },
     setter = { setting, pos -> setting.copy(catShowBudget = pos) },
     computation = { category, _ -> category.budget },
@@ -29,8 +31,8 @@ val BudgetField = ComputedField(
 )
 
 val CurrentField = ComputedField(
-    label = "Current",
-    description = "The summed up current spendings",
+    label = R.string.field_current_label,
+    description = R.string.field_current_description,
     extractor = { it.catShowCurrent },
     setter = { setting, pos -> setting.copy(catShowCurrent = pos) },
     computation = { _, entries -> entries.sumOf { it.amount } },
@@ -44,8 +46,8 @@ val CurrentField = ComputedField(
 )
 
 val TrendField = ComputedField(
-    label = "Trend",
-    description = "The projected trend of spendings in this month",
+    label = R.string.field_trend_label,
+    description = R.string.field_trend_description,
     extractor = { it.catShowTrend },
     setter = { setting, pos -> setting.copy(catShowTrend = pos) },
     computation = { _, entries ->
@@ -66,8 +68,8 @@ val TrendField = ComputedField(
 )
 
 val SpendPerDayField = ComputedField(
-    label = "To spend/day",
-    description = "How much is left to spend per remaining day in the month",
+    label = R.string.field_spend_per_day_label,
+    description = R.string.field_spend_per_day_description,
     extractor = { it.catShowSpendPerDay },
     setter = { setting, pos -> setting.copy(catShowSpendPerDay = pos) },
     computation = { category, entries ->
@@ -86,8 +88,8 @@ val SpendPerDayField = ComputedField(
 )
 
 val UnspendMoney = ComputedField(
-    label = "Unspend Money per day",
-    description = "Assuming equal spendings per day, how much money will be left over",
+    label = R.string.field_unspend_label,
+    description = R.string.field_unspend_description,
     extractor = { it.catShowUnspend },
     setter = { setting, pos -> setting.copy(catShowUnspend = pos) },
     computation = { category, entries ->

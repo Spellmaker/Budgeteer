@@ -8,10 +8,12 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import moe.chen.budgeteer.R
 import moe.chen.budgeteer.data.ComputedField
 import moe.chen.budgeteer.data.allCategories
 import moe.chen.budgeteer.room.Category
@@ -84,7 +86,7 @@ fun UserSettingEditor(
             )
         }
         FilteredSelectionWidget<Currency>(
-            label = "Input Currency",
+            label = stringResource(R.string.label_input_currency),
             items = elements,
             selectionChanged = { currentState = it },
             filterSelector = { it.currencyCode },
@@ -105,7 +107,7 @@ fun UserSettingEditor(
             CategoryRow(
                 category = Category(
                     cid = 0,
-                    label = "Example Category",
+                    label = stringResource(R.string.label_example_category),
                     budget = 0.0,
                     uid = 0,
                 ),
@@ -124,9 +126,9 @@ fun UserSettingEditor(
         Row(modifier = Modifier.padding(5.dp)) {
             Button(onClick = { orderVisible = !orderVisible }, modifier = Modifier.fillMaxWidth()) {
                 if (orderVisible) {
-                    Text("Stop editing computed fields per category")
+                    Text(stringResource(R.string.operation_stop_editing))
                 } else {
-                    Text("Edit computed fields per category")
+                    Text(stringResource(R.string.operation_start_editing))
                 }
             }
         }
@@ -151,8 +153,11 @@ fun UserSettingEditor(
                 }
             ) { element, modifier ->
                 Column(modifier = modifier.width(200.dp)) {
-                    Text(element.first.label)
-                    Text(element.first.description, style = MaterialTheme.typography.subtitle1)
+                    Text(stringResource(element.first.label))
+                    Text(
+                        stringResource(element.first.description),
+                        style = MaterialTheme.typography.subtitle1
+                    )
                 }
             }
         }
@@ -168,7 +173,7 @@ fun UserSettingEditor(
                 .padding(5.dp)
                 .fillMaxWidth()
         ) {
-            Text("Save Changes")
+            Text(stringResource(R.string.operation_save_changes))
         }
     }
 }

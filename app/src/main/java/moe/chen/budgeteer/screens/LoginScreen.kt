@@ -9,10 +9,12 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import moe.chen.budgeteer.R
 import moe.chen.budgeteer.navigation.BudgeteerScreens
 import moe.chen.budgeteer.room.User
 import moe.chen.budgeteer.viewmodel.UserViewModel
@@ -36,11 +38,15 @@ fun LoginScreen(
             Log.d("login", "navigating due to new user ${validUser.value}")
             navController.navigate(BudgeteerScreens.OverviewScreen.name)
         } else {
-            Log.d("login",
-                "not navigating, new user ${validUser.value} is equal to $previousUser")
+            Log.d(
+                "login",
+                "not navigating, new user ${validUser.value} is equal to $previousUser"
+            )
         }
     } else {
         Log.d("login", "valid user was not found!")
+        val successString = stringResource(R.string.notify_user_created)
+        val errorString = stringResource(R.string.notify_user_creation_error)
         LoginWidget(
             modifier = Modifier,
             username = username,
@@ -57,14 +63,14 @@ fun LoginScreen(
                     onSuccess = {
                         Toast.makeText(
                             context,
-                            "User created with id $it",
+                            successString,
                             Toast.LENGTH_SHORT
                         ).show()
                     },
                     onError = {
                         Toast.makeText(
                             context,
-                            "User was not created, maybe username is already taken",
+                            errorString,
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -90,26 +96,26 @@ fun LoginWidget(
         color = MaterialTheme.colors.background,
     ) {
         Column {
-            Text("Welcome to Budgeteer", style = MaterialTheme.typography.caption)
+            Text(stringResource(R.string.welcome), style = MaterialTheme.typography.caption)
             TextField(
                 singleLine = true,
                 value = username,
                 onValueChange = updateUsername,
-                label = { Text("Username") }
+                label = { Text(stringResource(R.string.label_username)) }
             )
             TextField(
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 value = password,
                 onValueChange = updatePassword,
-                label = { Text("Secret") }
+                label = { Text(stringResource(R.string.label_password)) }
             )
             Row {
                 Button(onClick = login) {
-                    Text("Login")
+                    Text(stringResource(R.string.operation_login))
                 }
                 Button(onClick = createUser) {
-                    Text("Create User")
+                    Text(stringResource(R.string.operation_create))
                 }
             }
         }

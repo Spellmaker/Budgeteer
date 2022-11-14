@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Budgeteer</string>
+    <string name="field_budget_label">Budget</string>
+    <string name="field_budget_description">Das monatliche Budget</string>
+    <string name="field_current_label">Aktuell</string>
+    <string name="field_current_description">Die aktuelle Ausgabensumme</string>
+    <string name="field_trend_label">Trend</string>
+    <string name="field_trend_description">Die voraussichtlichen Ausgaben diesen Monat</string>
+    <string name="field_spend_per_day_label">Übrig/Tag</string>
+    <string name="field_spend_per_day_description">Wie viel noch pro Tag im aktuellen Monat auszugeben übrig ist</string>
+    <string name="field_unspend_label">Überschuss</string>
+    <string name="field_unspend_description">Bei angenommenem gleichem Tagesbudget, wieviel wurde weniger ausgegeben bisher</string>
+    <string name="add_new_category">Kategorie hinzufügen</string>
+    <string name="category_name">Kategoriename</string>
+    <string name="category_budget">Budget</string>
+    <string name="operation_add">Hinzufügen</string>
+    <string name="operation_submit">Abschicken</string>
+    <string name="operation_cancel">Abbrechen</string>
+    <string name="label_amount">Betrag</string>
+    <string name="notify_user_created">Benutzer angelegt</string>
+    <string name="notify_user_creation_error">Benutzer konnte nicht angelegt werden, Nutzername evtl vergeben</string>
+    <string name="welcome">Willkommen</string>
+    <string name="label_username">Benutzer</string>
+    <string name="label_password">Passwort</string>
+    <string name="operation_login">Login</string>
+    <string name="operation_create">Nutzer anlegen</string>
+    <string name="operation_add_category">Kategorie hinzufügen</string>
+    <string name="label_input_currency">Währung</string>
+    <string name="label_example_category">Beispielkategorie</string>
+    <string name="operation_start_editing">Anzuzeigende Felder auswählen</string>
+    <string name="operation_stop_editing">Bearbeiten stoppen</string>
+    <string name="operation_save_changes">Änderungen speichern</string>
+    <string name="application_title">Budgeteer%1$s</string>
+    <string name="operation_settings">Einstellungen</string>
+    <string name="operation_logout">Logout</string>
+    <string name="operation_show">Anzeigen</string>
+    <string name="operation_up">Hoch</string>
+    <string name="operation_down">Runter</string>
+</resources>
