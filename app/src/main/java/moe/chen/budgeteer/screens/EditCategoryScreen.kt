@@ -27,16 +27,17 @@ fun EditCategoryScreen(
     navController: NavController,
     user: User,
     logout: () -> Unit,
+    accessSettings: () -> Unit,
 ) {
     val viewModel = hiltViewModel<AddCategoryViewModel>()
-    var label = remember { mutableStateOf<String>("") }
-    var budget = remember { mutableStateOf<Double>(0.0) }
+    val label = remember { mutableStateOf<String>("") }
+    val budget = remember { mutableStateOf<Double>(0.0) }
 
     val format = NumberFormat.getCurrencyInstance()
     format.currency = Currency.getInstance("EUR")
     format.maximumFractionDigits = 2
 
-    MainViewWidget(logout = logout) {
+    MainViewWidget(logout = logout, settings = accessSettings) {
         Column(
             modifier = Modifier
                 .padding(it)

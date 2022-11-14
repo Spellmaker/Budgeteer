@@ -5,7 +5,8 @@ enum class BudgeteerScreens {
     OverviewScreen,
     CategoryScreen,
     ExpenseInputScreen,
-    AddCategoryScreen;
+    AddCategoryScreen,
+    UserSettingsScreen;
 
     companion object {
         fun fromRoute(route: String?): BudgeteerScreens = route?.let { valueOf(it) }

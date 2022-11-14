@@ -10,10 +10,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import moe.chen.budgeteer.room.AppDatabase
-import moe.chen.budgeteer.room.BudgetEntryDao
-import moe.chen.budgeteer.room.CategoryDao
-import moe.chen.budgeteer.room.UserDao
+import moe.chen.budgeteer.room.*
 import javax.inject.Singleton
 
 private val Context.userDataStore: DataStore<Preferences>
@@ -40,9 +37,13 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideUserSettingDao(appDatabase: AppDatabase): UserSettingDao =
+        appDatabase.userSettingDao()
+
+    @Singleton
+    @Provides
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase =
         Room.databaseBuilder(context, AppDatabase::class.java, "budgeteer_db")
-            .fallbackToDestructiveMigration()
             .build()
 
     @Singleton

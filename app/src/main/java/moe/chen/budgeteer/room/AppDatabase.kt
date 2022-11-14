@@ -1,5 +1,6 @@
 package moe.chen.budgeteer.room
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -10,7 +11,13 @@ import moe.chen.budgeteer.data.DateTimeHandler
         User::class,
         Category::class,
         BudgetEntry::class,
-    ], version = 2
+        UserSetting::class,
+    ],
+    version = 3,
+    autoMigrations = [
+        AutoMigration(from = 2, to = 3),
+    ],
+    exportSchema = true,
 )
 @TypeConverters(DateTimeHandler::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -19,4 +26,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
 
     abstract fun budgetEntryDao(): BudgetEntryDao
+
+    abstract fun userSettingDao(): UserSettingDao
 }

@@ -20,7 +20,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.flow.Flow
 import moe.chen.budgeteer.data.*
-import moe.chen.budgeteer.defaultNumberFormat
 import moe.chen.budgeteer.navigation.BudgeteerScreens
 import moe.chen.budgeteer.preview.exampleCategories
 import moe.chen.budgeteer.preview.exampleEntries
@@ -28,6 +27,7 @@ import moe.chen.budgeteer.room.BudgetEntry
 import moe.chen.budgeteer.room.Category
 import moe.chen.budgeteer.room.User
 import moe.chen.budgeteer.viewmodel.OverviewViewModel
+import moe.chen.budgeteer.viewmodel.UserSettingViewModel
 import moe.chen.budgeteer.widgets.MainViewWidget
 
 @Composable
@@ -35,28 +35,42 @@ fun OverviewScreen(
     navController: NavController,
     user: User,
     logout: () -> Unit,
+    accessSettings: () -> Unit,
 ) {
     val model = hiltViewModel<OverviewViewModel>()
     model.listenForUser(user)
+    val settingsModel = hiltViewModel<UserSettingViewModel>()
+    val settings = settingsModel.listenToUser(user).collectAsState()
+    if (settings.value == null) {
+        Log.d("OverviewScreen", "creating default settings")
+        settingsModel.createDefaultSetting()
+    } else if (settings.value != settingsModel.invalidSettings) {
+        val categories = model.categories.collectAsState()
+        val converter = settingsModel.converterDefault.collectAsState()
 
-    val categories = model.categories.collectAsState()
-
-    OverviewWidget(
-        logout = logout,
-        categories = categories.value,
-        onAddCategory = {
-            navController.navigate(BudgeteerScreens.AddCategoryScreen.name)
-        },
-        getCategoryFlow = { model.categoryEntryFlow(it) },
-        clickCategory = {
-            navController
-                .navigate("${BudgeteerScreens.ExpenseInputScreen.name}/${it.cid!!}")
-        },
-        longPress = {
-            navController
-                .navigate("${BudgeteerScreens.CategoryScreen.name}/${it.cid!!}")
-        }
-    )
+        OverviewWidget(
+            logout = logout,
+            categories = categories.value,
+            onAddCategory = {
+                navController.navigate(BudgeteerScreens.AddCategoryScreen.name)
+            },
+            getCategoryFlow = { model.categoryEntryFlow(it) },
+            clickCategory = {
+                navController
+                    .navigate("${BudgeteerScreens.ExpenseInputScreen.name}/${it.cid!!}")
+            },
+            longPress = {
+                navController
+                    .navigate("${BudgeteerScreens.CategoryScreen.name}/${it.cid!!}")
+            },
+            formatter = { (converter.value?.format(it) ?: "Nooo") },
+            accessSettings = accessSettings,
+            fields = allCategories.map { it to it.extractor(settings.value!!) }
+                .filter { it.second >= 0}
+                .sortedBy { it.second }
+                .map { it.first }
+        )
+    }
 }
 
 @Composable
@@ -67,12 +81,22 @@ fun OverviewWidget(
     clickCategory: (Category) -> Unit = {},
     longPress: (Category) -> Unit = {},
     logout: () -> Unit,
+    accessSettings: () -> Unit,
+    fields: List<ComputedField>,
+    formatter: @Composable (Double) -> String,
 ) {
-    MainViewWidget(logout = logout) {
+    MainViewWidget(logout = logout, settings = accessSettings) {
         Column(
             modifier = Modifier.padding(it)
         ) {
-            CategoryListWidget(categories, getCategoryFlow, clickCategory, longPress)
+            CategoryListWidget(
+                categories,
+                getCategoryFlow,
+                clickCategory,
+                longPress,
+                fields,
+                formatter,
+            )
             Button(
                 onClick = onAddCategory, modifier = Modifier
                     .fillMaxWidth()
@@ -90,6 +114,8 @@ fun CategoryListWidget(
     getCategoryFlow: (Category) -> Flow<List<BudgetEntry>>,
     clickCategory: (Category) -> Unit = {},
     longPress: (Category) -> Unit = {},
+    fields: List<ComputedField>,
+    formatter: @Composable (Double) -> String,
 ) {
 
     LazyColumn {
@@ -103,6 +129,8 @@ fun CategoryListWidget(
                 entries = entries,
                 clicked = { clickCategory(it) },
                 longPress = { longPress(it) },
+                formatter = formatter,
+                fields = fields
             )
         }
     }
@@ -114,6 +142,8 @@ fun CategoryRow(
     entries: List<BudgetEntry>,
     clicked: () -> Unit,
     longPress: () -> Unit,
+    fields: List<ComputedField>,
+    formatter: @Composable (Double) -> String,
 ) {
     Card(
         modifier = Modifier
@@ -125,8 +155,7 @@ fun CategoryRow(
                     onTap = { clicked() },
                     onLongPress = { longPress() }
                 )
-            }
-        ,
+            },
         shape = RoundedCornerShape(corner = CornerSize(14.dp)),
         elevation = 4.dp
     ) {
@@ -149,7 +178,12 @@ fun CategoryRow(
                     .padding(5.dp),
                 verticalArrangement = Arrangement.Center
             ) {
-                CategorySummary(category = category, entries = entries)
+                CategorySummary(
+                    category = category,
+                    entries = entries,
+                    formatter = formatter,
+                    fields = fields,
+                )
             }
         }
 
@@ -160,12 +194,8 @@ fun CategoryRow(
 fun CategorySummary(
     category: Category,
     entries: List<BudgetEntry> = exampleEntries(),
-    fields: List<ComputedField> = listOf(
-        CurrentField,
-        BudgetField,
-        TrendField,
-        SpendPerDayField,
-    )
+    fields: List<ComputedField>,
+    formatter: @Composable (Double) -> String,
 ) {
     val computed = fields.map { field ->
         val value = field.computation(category, entries)
@@ -181,7 +211,7 @@ fun CategorySummary(
         Spacer(modifier = Modifier.width(10.dp))
 
         Column {
-            computed.forEach { Text(defaultNumberFormat.format(it.first), color = it.second) }
+            computed.forEach { Text(formatter(it.first), color = it.second) }
         }
     }
 }

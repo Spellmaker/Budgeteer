@@ -26,14 +26,20 @@ fun BudgeteerNavigation() {
             VerifyUserData(
                 navController = navController,
             ) { user, logout ->
-                OverviewScreen(navController = navController, user = user, logout = logout)
+                OverviewScreen(navController = navController, user = user, logout = logout,
+                    accessSettings = {
+                        navController.navigate(BudgeteerScreens.UserSettingsScreen.name)
+                    })
             }
         }
         composable(route = BudgeteerScreens.AddCategoryScreen.name) {
             VerifyUserData(
                 navController = navController,
             ) { user, logout ->
-                EditCategoryScreen(navController = navController, user = user, logout = logout)
+                EditCategoryScreen(navController = navController, user = user, logout = logout,
+                    accessSettings = {
+                        navController.navigate(BudgeteerScreens.UserSettingsScreen.name)
+                    })
             }
         }
         composable(
@@ -43,11 +49,15 @@ fun BudgeteerNavigation() {
             val category = it.arguments?.getInt("category")
             VerifyUserData(
                 navController = navController,
-            ) { _, logout ->
+            ) { user, logout ->
                 CategoryDetailsScreen(
                     navController = navController,
                     categoryId = category!!,
-                    logout = logout
+                    logout = logout,
+                    user = user,
+                    accessSettings = {
+                        navController.navigate(BudgeteerScreens.UserSettingsScreen.name)
+                    }
                 )
             }
         }
@@ -58,12 +68,26 @@ fun BudgeteerNavigation() {
             val category = it.arguments?.getInt("category")
             VerifyUserData(
                 navController = navController,
-            ) { _, logout ->
+            ) { user, logout ->
                 InputEntryScreen(
                     navController = navController,
                     categoryId = category!!,
-                    logout = logout
+                    logout = logout,
+                    user = user,
+                    accessSettings = {
+                        navController.navigate(BudgeteerScreens.UserSettingsScreen.name)
+                    }
                 )
+            }
+        }
+        composable(route = BudgeteerScreens.UserSettingsScreen.name) {
+            VerifyUserData(
+                navController = navController,
+            ) { user, logout ->
+                UserSettingsScreen(navController = navController, user = user, logout = logout,
+                    accessSettings = {
+                        navController.navigate(BudgeteerScreens.UserSettingsScreen.name)
+                    })
             }
         }
     }

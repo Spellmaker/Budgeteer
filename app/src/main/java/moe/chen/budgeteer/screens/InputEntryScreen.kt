@@ -16,30 +16,38 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import moe.chen.budgeteer.defaultNumberFormat
 import moe.chen.budgeteer.formatCompact
 import moe.chen.budgeteer.room.Category
+import moe.chen.budgeteer.room.User
 import moe.chen.budgeteer.viewmodel.InputEntryViewModel
+import moe.chen.budgeteer.viewmodel.UserSettingViewModel
 import moe.chen.budgeteer.widgets.MainViewWidget
 
 @Composable
 fun InputEntryScreen(
     navController: NavController,
+    user: User,
     categoryId: Int,
     logout: () -> Unit,
+    accessSettings: () -> Unit,
 ) {
-    var amount = remember { mutableStateOf(0.0) }
+    val amount = remember { mutableStateOf(0.0) }
     val model = hiltViewModel<InputEntryViewModel>()
     model.listenForCategory(categoryId)
     val category = model.category.collectAsState()
 
-    MainViewWidget(logout = logout) {
+    val settingsModel = hiltViewModel<UserSettingViewModel>()
+    settingsModel.listenToUser(user)
+
+    val converterDefault = settingsModel.converterDefault.collectAsState()
+
+    MainViewWidget(logout = logout, settings = accessSettings) {
         InputWidget(
             category = category.value,
             amount = amount.value,
             setAmount = {
                 try {
-                    amount.value = defaultNumberFormat.parse(it)!!.toDouble()
+                    amount.value = converterDefault.value?.parse(it)?.toDouble() ?: 0.0
                 } catch (_: Throwable) {
 
                 }
@@ -51,6 +59,12 @@ fun InputEntryScreen(
             createEntry = {
                 model.addEntry(amount.value)
                 navController.popBackStack()
+            },
+            formatter = {
+                converterDefault.value?.format(it) ?: "N"
+            },
+            formatterCompact = {
+                formatCompact(it)
             }
         )
     }
@@ -65,6 +79,8 @@ fun InputWidget(
     changeAmount: (Double) -> Unit = {},
     createEntry: () -> Unit = {},
     abort: () -> Unit = {},
+    formatter: @Composable (Double) -> String = { "n/a" },
+    formatterCompact: (Double) -> String = { it.toString() },
 ) {
     Column(
         modifier = Modifier.fillMaxHeight()
@@ -78,9 +94,11 @@ fun InputWidget(
         Spacer(modifier = Modifier.height(10.dp))
         Row {
             TextField(
-                value = defaultNumberFormat.format(amount),
+                value = formatter(amount),
                 onValueChange = setAmount,
-                modifier = Modifier.fillMaxWidth().padding(5.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp),
                 label = { Text("Amount") },
                 singleLine = true,
             )
@@ -92,36 +110,40 @@ fun InputWidget(
         ) {
             Column(modifier = Modifier.weight(1f, true)) {
                 Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-                    AmountButton(amount = -10.0, changeAmount = changeAmount)
-                    AmountButton(amount = -5.0, changeAmount = changeAmount)
-                    AmountButton(amount = -1.0, changeAmount = changeAmount)
+                    AmountButton(amount = -10.0, changeAmount = changeAmount, formatterCompact)
+                    AmountButton(amount = -5.0, changeAmount = changeAmount, formatterCompact)
+                    AmountButton(amount = -1.0, changeAmount = changeAmount, formatterCompact)
                 }
                 Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-                    AmountButton(amount = -0.5, changeAmount = changeAmount)
-                    AmountButton(amount = -0.1, changeAmount = changeAmount)
-                    AmountButton(amount = -0.01, changeAmount = changeAmount)
+                    AmountButton(amount = -0.5, changeAmount = changeAmount, formatterCompact)
+                    AmountButton(amount = -0.1, changeAmount = changeAmount, formatterCompact)
+                    AmountButton(amount = -0.01, changeAmount = changeAmount, formatterCompact)
                 }
             }
             Column(modifier = Modifier.weight(1f, true)) {
                 Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-                    AmountButton(amount = 10.0, changeAmount = changeAmount)
-                    AmountButton(amount = 5.0, changeAmount = changeAmount)
-                    AmountButton(amount = 1.0, changeAmount = changeAmount)
+                    AmountButton(amount = 10.0, changeAmount = changeAmount, formatterCompact)
+                    AmountButton(amount = 5.0, changeAmount = changeAmount, formatterCompact)
+                    AmountButton(amount = 1.0, changeAmount = changeAmount, formatterCompact)
                 }
                 Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-                    AmountButton(amount = 0.5, changeAmount = changeAmount)
-                    AmountButton(amount = 0.1, changeAmount = changeAmount)
-                    AmountButton(amount = 0.01, changeAmount = changeAmount)
+                    AmountButton(amount = 0.5, changeAmount = changeAmount, formatterCompact)
+                    AmountButton(amount = 0.1, changeAmount = changeAmount, formatterCompact)
+                    AmountButton(amount = 0.01, changeAmount = changeAmount, formatterCompact)
                 }
             }
         }
         Spacer(modifier = Modifier.height(10.dp))
         Row {
             Column {
-                Button(onClick = createEntry, modifier = Modifier.fillMaxWidth().padding(5.dp)) {
+                Button(onClick = createEntry, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp)) {
                     Text("Submit")
                 }
-                Button(onClick = abort, modifier = Modifier.fillMaxWidth().padding(5.dp)) {
+                Button(onClick = abort, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp)) {
                     Text("Abort")
                 }
             }
@@ -130,7 +152,7 @@ fun InputWidget(
 }
 
 @Composable
-fun AmountButton(amount: Double, changeAmount: (Double) -> Unit) {
+fun AmountButton(amount: Double, changeAmount: (Double) -> Unit, formatter: (Double) -> String) {
     Surface(
         shape = MaterialTheme.shapes.small,
         border = ButtonDefaults.outlinedBorder,
@@ -146,7 +168,7 @@ fun AmountButton(amount: Double, changeAmount: (Double) -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                formatCompact(amount),
+                formatter(amount),
                 fontSize = 12.sp,
                 modifier = Modifier
                     .clickable(onClick = { changeAmount(amount) }

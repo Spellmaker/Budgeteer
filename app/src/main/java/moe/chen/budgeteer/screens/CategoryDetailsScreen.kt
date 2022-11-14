@@ -14,9 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import moe.chen.budgeteer.defaultNumberFormat
 import moe.chen.budgeteer.room.BudgetEntry
+import moe.chen.budgeteer.room.User
 import moe.chen.budgeteer.viewmodel.CategoryDetailViewModel
+import moe.chen.budgeteer.viewmodel.UserSettingViewModel
 import moe.chen.budgeteer.widgets.MainViewWidget
 import java.time.format.DateTimeFormatter
 
@@ -24,17 +25,24 @@ import java.time.format.DateTimeFormatter
 fun CategoryDetailsScreen(
     navController: NavController,
     categoryId: Int,
+    user: User,
     logout: () -> Unit,
+    accessSettings: () -> Unit,
 ) {
     val model = hiltViewModel<CategoryDetailViewModel>()
     model.listenForCategory(categoryId)
     val category = model.category.collectAsState()
 
+    val settingsModel = hiltViewModel<UserSettingViewModel>()
+    settingsModel.listenToUser(user)
+
+    val convertDefault = settingsModel.converterDefault.collectAsState()
+
     if (category.value != null) {
         val entries =
             model.categoryEntryFlow(category.value!!).collectAsState(initial = emptyList())
 
-        MainViewWidget(logout = logout) {
+        MainViewWidget(logout = logout, settings = accessSettings) {
             Column(
                 modifier = Modifier.fillMaxHeight()
             ) {
@@ -47,7 +55,7 @@ fun CategoryDetailsScreen(
                 Spacer(modifier = Modifier.height(10.dp))
                 LazyColumn {
                     items(items = entries.value.sortedByDescending { it.date }) {
-                        ExpenseWidget(it) { model.removeEntry(it) }
+                        ExpenseWidget(it, { model.removeEntry(it) }, { convertDefault.value?.format(it) ?: "Noooo" })
                     }
                 }
             }
@@ -59,6 +67,7 @@ fun CategoryDetailsScreen(
 fun ExpenseWidget(
     item: BudgetEntry,
     onClick: () -> Unit,
+    formatter: @Composable (Double) -> String,
 ) {
     Card(
         modifier = Modifier
@@ -69,11 +78,13 @@ fun ExpenseWidget(
         elevation = 4.dp,
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(DateTimeFormatter.ISO_ZONED_DATE_TIME.format(item.date))
-            Text(defaultNumberFormat.format(item.amount))
+            Text(formatter(item.amount))
         }
     }
 }

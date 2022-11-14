@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 fun MainViewWidget(
     title: String = "",
     logout: () -> Unit,
+    settings: () -> Unit,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val addendum = if (title.isEmpty()) {
@@ -30,6 +31,9 @@ fun MainViewWidget(
                         text = "Budgeteer$addendum",
                         style = MaterialTheme.typography.h6
                     )
+                    Button(onClick = settings) {
+                        Text("Settings")
+                    }
                     Button(onClick = logout) {
                         Text("Logout")
                     }
