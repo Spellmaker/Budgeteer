@@ -37,6 +37,16 @@ data class UserSetting(
             catShowSpendPerDay = 3,
             catShowUnspend = -1,
         )
+        fun getDefault(userId: Int) = UserSetting(
+            id = null,
+            uid = userId,
+            currency = "EUR",
+            catShowCurrent = 0,
+            catShowBudget = 1,
+            catShowTrend = 2,
+            catShowSpendPerDay = 3,
+            catShowUnspend = -1,
+        )
     }
 }
 

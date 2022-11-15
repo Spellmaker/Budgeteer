@@ -37,7 +37,6 @@ fun CategoryDetailsScreen(
     val category = model.category.collectAsState()
 
     val settingsModel = hiltViewModel<UserSettingViewModel>()
-    settingsModel.listenToUser(user)
 
     val convertDefault = settingsModel.converterDefault.collectAsState()
 
@@ -62,7 +61,7 @@ fun CategoryDetailsScreen(
                         Button(onClick = {
                             navController.navigate(
                                 BudgeteerScreens.AddCategoryScreen.name +
-                                        "/${category.value?.cid}"
+                                        "/${user.uid!!}/${category.value?.cid}"
                             )
                         }, modifier = Modifier.padding(5.dp)) {
                             Text("Edit")

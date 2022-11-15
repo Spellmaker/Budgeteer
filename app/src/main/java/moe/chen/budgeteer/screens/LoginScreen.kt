@@ -36,7 +36,10 @@ fun LoginScreen(
         if (previousUser == null) {
             previousUser = validUser.value
             Log.d("login", "navigating due to new user ${validUser.value}")
-            navController.navigate(BudgeteerScreens.OverviewScreen.name)
+            navController.navigate(
+                BudgeteerScreens.OverviewScreen.name +
+                        "/${previousUser!!.uid}"
+            )
         } else {
             Log.d(
                 "login",

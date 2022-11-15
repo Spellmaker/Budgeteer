@@ -16,6 +16,7 @@ import androidx.navigation.NavController
 import moe.chen.budgeteer.R
 import moe.chen.budgeteer.data.ComputedField
 import moe.chen.budgeteer.data.allCategories
+import moe.chen.budgeteer.navigation.BudgeteerScreens
 import moe.chen.budgeteer.room.Category
 import moe.chen.budgeteer.room.User
 import moe.chen.budgeteer.room.UserSetting
@@ -28,17 +29,18 @@ import java.util.*
 @Composable
 fun UserSettingsScreen(
     navController: NavController,
-    user: User,
-    logout: () -> Unit,
     accessSettings: () -> Unit,
 ) {
     val model = hiltViewModel<UserSettingViewModel>()
-    val settings = model.listenToUser(user).collectAsState()
+    val settings = model.settings.collectAsState()
     val converter = model.converterDefault.collectAsState()
     if (settings.value == null) {
         model.createDefaultSetting()
     } else if (settings.value != model.invalidSettings) {
-        MainViewWidget(logout = logout, settings = accessSettings) {
+        MainViewWidget(logout = {
+            model.setActiveUser(User(null, "logout", "logout"))
+            navController.navigate(BudgeteerScreens.LoginScreen.name)
+        }, settings = accessSettings) {
             UserSettingEditor(
                 settings.value!!,
                 { converter.value?.format(it) ?: it.toString() },

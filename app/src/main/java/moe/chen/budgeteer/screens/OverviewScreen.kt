@@ -21,7 +21,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.flow.Flow
 import moe.chen.budgeteer.R
-import moe.chen.budgeteer.data.*
+import moe.chen.budgeteer.data.ComputedField
+import moe.chen.budgeteer.data.allCategories
 import moe.chen.budgeteer.navigation.BudgeteerScreens
 import moe.chen.budgeteer.preview.exampleCategories
 import moe.chen.budgeteer.preview.exampleEntries
@@ -42,7 +43,7 @@ fun OverviewScreen(
     val model = hiltViewModel<OverviewViewModel>()
     model.listenForUser(user)
     val settingsModel = hiltViewModel<UserSettingViewModel>()
-    val settings = settingsModel.listenToUser(user).collectAsState()
+    val settings = settingsModel.settings.collectAsState()
     if (settings.value == null) {
         Log.d("OverviewScreen", "creating default settings")
         settingsModel.createDefaultSetting()
@@ -54,7 +55,10 @@ fun OverviewScreen(
             logout = logout,
             categories = categories.value,
             onAddCategory = {
-                navController.navigate("${BudgeteerScreens.AddCategoryScreen.name}/-1")
+                navController.navigate(
+                    BudgeteerScreens.AddCategoryScreen.name +
+                            "/${user.uid!!}/-1"
+                )
             },
             getCategoryFlow = { model.categoryEntryFlow(it) },
             clickCategory = {
@@ -63,7 +67,10 @@ fun OverviewScreen(
             },
             longPress = {
                 navController
-                    .navigate("${BudgeteerScreens.CategoryScreen.name}/${it.cid!!}")
+                    .navigate(
+                        BudgeteerScreens.CategoryScreen.name +
+                                "/${user.uid!!}/${it.cid!!}"
+                    )
             },
             formatter = { (converter.value?.format(it) ?: it.toString()) },
             accessSettings = accessSettings,

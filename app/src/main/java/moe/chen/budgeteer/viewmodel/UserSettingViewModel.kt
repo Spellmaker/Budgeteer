@@ -1,11 +1,16 @@
 package moe.chen.budgeteer.viewmodel
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import moe.chen.budgeteer.data.PreferenceRepository
 import moe.chen.budgeteer.room.User
 import moe.chen.budgeteer.room.UserSetting
 import moe.chen.budgeteer.room.UserSettingDao
@@ -16,7 +21,11 @@ import javax.inject.Inject
 @HiltViewModel
 class UserSettingViewModel @Inject constructor(
     private val userSettingDao: UserSettingDao,
+    private val preferenceRepository: PreferenceRepository,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    private val userId: Int = savedStateHandle.get<Int>("user")!!
 
     val invalidSettings = UserSetting(
         id = -1,
@@ -29,13 +38,29 @@ class UserSettingViewModel @Inject constructor(
         catShowUnspend = -1,
     )
 
-    private var currentUser: User? = null
-
     private val _settings = MutableStateFlow<UserSetting?>(invalidSettings)
+
+    val settings = _settings.asStateFlow()
 
     private val _converterDefault = MutableStateFlow<NumberFormat?>(null)
 
     val converterDefault = _converterDefault.asStateFlow()
+
+    init {
+        _settings.value = invalidSettings
+        viewModelScope.launch {
+            userSettingDao.findForUser(userId)
+                .distinctUntilChanged()
+                .collect { entry ->
+                    Log.d("UserSettingViewModel", "emitting settings $entry")
+                    _settings.value = entry
+                    if (entry != null && entry != invalidSettings) {
+                        Log.d("UserSettingViewModel", "Updating converters with new symbol ${entry.currency}")
+                        updateConverters(entry)
+                    }
+                }
+        }
+    }
 
 
     private fun updateConverters(currentSettings: UserSetting) {
@@ -50,33 +75,19 @@ class UserSettingViewModel @Inject constructor(
         _converterDefault.value = format1
     }
 
-    fun listenToUser(user: User): StateFlow<UserSetting?> {
-        _settings.value = invalidSettings
-        viewModelScope.launch {
-            currentUser = user
-            userSettingDao.findForUser(user.uid!!)
-                .takeWhile { currentUser?.uid == user.uid }
-                .distinctUntilChanged()
-                .collect { entry ->
-                    Log.d("UserSettingViewModel", "emitting settings $entry")
-                    _settings.value = entry
-                    if (entry != null && entry != invalidSettings) {
-                        Log.d("UserSettingViewModel", "Updating converters with new symbol ${entry.currency}")
-                        updateConverters(entry)
-                    }
-                }
-        }
-        return _settings.asStateFlow()
-    }
-
     fun createDefaultSetting() {
         if (_settings.value == null) {
             viewModelScope.launch {
                 userSettingDao.createSettings(
-                    UserSetting.getDefault(currentUser!!)
+                    UserSetting.getDefault(userId)
                 )
             }
         }
+    }
+
+    fun setActiveUser(user: User) = runBlocking {
+        preferenceRepository.setUser(user)
+        Log.d("UserViewModel", "updated user to $user")
     }
 
     fun updateSettings(settings: UserSetting) {

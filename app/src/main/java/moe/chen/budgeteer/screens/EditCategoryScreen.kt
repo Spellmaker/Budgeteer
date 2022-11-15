@@ -34,8 +34,6 @@ fun EditCategoryScreen(
     val viewModel = hiltViewModel<AddCategoryViewModel>()
 
     val settingsModel = hiltViewModel<UserSettingViewModel>()
-    settingsModel.listenToUser(user)
-
     val convertDefault = settingsModel.converterDefault.collectAsState()
     val existingCategory = viewModel.category.collectAsState()
 
@@ -87,7 +85,10 @@ fun EditCategoryScreen(
                                 budget.value,
                             )
                         }
-                        navController.navigate(BudgeteerScreens.OverviewScreen.name)
+                        navController.navigate(
+                            BudgeteerScreens.OverviewScreen.name +
+                                    "/${user.uid!!}"
+                        )
                     }
                 )
             }
