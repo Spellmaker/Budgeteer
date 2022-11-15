@@ -33,8 +33,8 @@ fun UserSettingsScreen(
     accessSettings: () -> Unit,
 ) {
     val model = hiltViewModel<UserSettingViewModel>()
-    val converter = model.converterDefault.collectAsState()
     val settings = model.listenToUser(user).collectAsState()
+    val converter = model.converterDefault.collectAsState()
     if (settings.value == null) {
         model.createDefaultSetting()
     } else if (settings.value != model.invalidSettings) {
@@ -117,7 +117,8 @@ fun UserSettingEditor(
                 fields = categoryElements
                     .filter { it.second >= 0 }
                     .sortedBy { it.second }
-                    .map { it.first }
+                    .map { it.first },
+
             ) {
                 formatter(it)
             }

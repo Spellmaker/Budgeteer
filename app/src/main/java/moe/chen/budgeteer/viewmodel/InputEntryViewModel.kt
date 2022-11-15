@@ -1,6 +1,7 @@
 package moe.chen.budgeteer.viewmodel
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,23 +21,26 @@ import javax.inject.Inject
 class InputEntryViewModel @Inject constructor(
     private val categoryDao: CategoryDao,
     private val entryDao: BudgetEntryDao,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    private val categoryId: Int = savedStateHandle.get<Int>("category")!!
 
     private val _category = MutableStateFlow<Category?>(null)
 
-    val category = _category.asStateFlow()
-
-    private var currentId: Int? = null
-
-    fun listenForCategory(category: Int) {
+    init {
         viewModelScope.launch {
-            currentId = category
-            categoryDao.findCategory(category)
-                .takeWhile { currentId == category }
+            currentId = categoryId
+            categoryDao.findCategory(categoryId)
+                .takeWhile { currentId == categoryId }
                 .distinctUntilChanged()
                 .collect { category -> _category.value = category }
         }
     }
+
+    val category = _category.asStateFlow()
+
+    private var currentId: Int? = null
 
     fun addEntry(amount: Double) {
         viewModelScope.launch {

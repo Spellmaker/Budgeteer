@@ -32,13 +32,19 @@ fun EditCategoryScreen(
     accessSettings: () -> Unit,
 ) {
     val viewModel = hiltViewModel<AddCategoryViewModel>()
-    val label = remember { mutableStateOf<String>("") }
-    val budget = remember { mutableStateOf<Double>(0.0) }
 
     val settingsModel = hiltViewModel<UserSettingViewModel>()
     settingsModel.listenToUser(user)
 
     val convertDefault = settingsModel.converterDefault.collectAsState()
+    val existingCategory = viewModel.category.collectAsState()
+
+    if (existingCategory.value == viewModel.invalidCategory) {
+        return
+    }
+
+    val label = remember { mutableStateOf<String>(existingCategory.value?.label ?: "") }
+    val budget = remember { mutableStateOf<Double>(existingCategory.value?.budget ?: 0.0) }
 
     MainViewWidget(logout = logout, settings = accessSettings) {
         if (convertDefault.value != null) {
@@ -47,10 +53,17 @@ fun EditCategoryScreen(
                     .padding(it)
                     .fillMaxWidth()
             ) {
-                Text(
-                    stringResource(R.string.add_new_category),
-                    style = MaterialTheme.typography.caption
-                )
+                if (existingCategory.value == null) {
+                    Text(
+                        stringResource(R.string.add_new_category),
+                        style = MaterialTheme.typography.caption
+                    )
+                } else {
+                    Text(
+                        stringResource(R.string.modify_category),
+                        style = MaterialTheme.typography.caption
+                    )
+                }
 
                 EditWidget(
                     label = label.value,
@@ -64,7 +77,16 @@ fun EditCategoryScreen(
                         }
                     },
                     create = {
-                        viewModel.addCategory(label.value, budget.value, user.uid!!)
+                        if (existingCategory.value == null) {
+                            viewModel.addCategory(label.value, budget.value, user.uid!!)
+                        } else {
+                            viewModel.updateCategory(
+                                existingCategory.value!!.cid!!,
+                                existingCategory.value!!.uid,
+                                label.value,
+                                budget.value,
+                            )
+                        }
                         navController.navigate(BudgeteerScreens.OverviewScreen.name)
                     }
                 )
@@ -107,6 +129,6 @@ fun EditWidget(
             .fillMaxWidth()
             .padding(5.dp)
     ) {
-        Text(stringResource(R.string.operation_add))
+        Text(stringResource(R.string.operation_submit))
     }
 }

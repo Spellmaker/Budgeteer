@@ -21,21 +21,17 @@ import androidx.navigation.NavController
 import moe.chen.budgeteer.R
 import moe.chen.budgeteer.formatCompact
 import moe.chen.budgeteer.room.Category
-import moe.chen.budgeteer.room.User
 import moe.chen.budgeteer.viewmodel.InputEntryViewModel
 import moe.chen.budgeteer.widgets.MainViewWidget
 
 @Composable
 fun InputEntryScreen(
     navController: NavController,
-    user: User,
-    categoryId: Int,
     logout: () -> Unit,
     accessSettings: () -> Unit,
 ) {
     var amountDouble by remember { mutableStateOf(0.0) }
     val model = hiltViewModel<InputEntryViewModel>()
-    model.listenForCategory(categoryId)
     val category = model.category.collectAsState()
     var amountString by remember {
         mutableStateOf<String>(

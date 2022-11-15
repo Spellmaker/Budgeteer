@@ -6,14 +6,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import moe.chen.budgeteer.navigation.BudgeteerScreens
 import moe.chen.budgeteer.room.BudgetEntry
 import moe.chen.budgeteer.room.User
 import moe.chen.budgeteer.viewmodel.CategoryDetailViewModel
@@ -48,9 +51,23 @@ fun CategoryDetailsScreen(
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(category.value?.label ?: "null")
+                    Text(category.value?.label ?: "null", modifier = Modifier.padding(5.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Button(onClick = {
+                            navController.navigate(
+                                BudgeteerScreens.AddCategoryScreen.name +
+                                        "/${category.value?.cid}"
+                            )
+                        }, modifier = Modifier.padding(5.dp)) {
+                            Text("Edit")
+                        }
+                    }
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 LazyColumn {

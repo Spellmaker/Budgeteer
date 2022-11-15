@@ -37,4 +37,6 @@
     <string name="operation_show">Anzeigen</string>
     <string name="operation_up">Hoch</string>
     <string name="operation_down">Runter</string>
+    <string name="modify_category">Kategorie anpassen</string>
+    <string name="operation_edit">Bearbeiten</string>
 </resources>

@@ -32,7 +32,10 @@ fun BudgeteerNavigation() {
                     })
             }
         }
-        composable(route = BudgeteerScreens.AddCategoryScreen.name) {
+        composable(
+            route = "${BudgeteerScreens.AddCategoryScreen.name}/{category}",
+            arguments = listOf(navArgument("category") { type = NavType.IntType })
+        ) {
             VerifyUserData(
                 navController = navController,
             ) { user, logout ->
@@ -65,15 +68,12 @@ fun BudgeteerNavigation() {
             route = "${BudgeteerScreens.ExpenseInputScreen.name}/{category}",
             arguments = listOf(navArgument("category") { type = NavType.IntType })
         ) {
-            val category = it.arguments?.getInt("category")
             VerifyUserData(
                 navController = navController,
-            ) { user, logout ->
+            ) { _, logout ->
                 InputEntryScreen(
                     navController = navController,
-                    categoryId = category!!,
                     logout = logout,
-                    user = user,
                     accessSettings = {
                         navController.navigate(BudgeteerScreens.UserSettingsScreen.name)
                     }

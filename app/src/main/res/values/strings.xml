@@ -36,4 +36,6 @@
     <string name="operation_show">Show</string>
     <string name="operation_up">Up</string>
     <string name="operation_down">Down</string>
+    <string name="modify_category">Modify category</string>
+    <string name="operation_edit">Edit</string>
 </resources>

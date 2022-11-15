@@ -54,7 +54,7 @@ fun OverviewScreen(
             logout = logout,
             categories = categories.value,
             onAddCategory = {
-                navController.navigate(BudgeteerScreens.AddCategoryScreen.name)
+                navController.navigate("${BudgeteerScreens.AddCategoryScreen.name}/-1")
             },
             getCategoryFlow = { model.categoryEntryFlow(it) },
             clickCategory = {
