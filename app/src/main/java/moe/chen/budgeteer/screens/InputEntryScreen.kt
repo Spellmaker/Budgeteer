@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -91,19 +94,19 @@ fun InputWidget(
     changeAmount: (Double) -> Unit = {},
     createEntry: () -> Unit = {},
     abort: () -> Unit = {},
-    //formatter: @Composable (Double) -> String = { "n/a" },
     formatterCompact: (Double) -> String = { it.toString() },
 ) {
     Column(
         modifier = Modifier.fillMaxHeight()
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            Text(category?.label ?: "null") //TODO
+            Text(category?.label ?: "null", style = MaterialTheme.typography.h6)
         }
-        Spacer(modifier = Modifier.height(10.dp))
         Row {
             TextField(
                 value = amount,
@@ -227,23 +230,31 @@ fun InputWidget(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(10.dp))
-        Row {
-            Column {
-                Button(
-                    onClick = createEntry, modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(5.dp),
-                    enabled = isValid
-                ) {
-                    Text(stringResource(R.string.operation_submit))
+
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .padding(10.dp),
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                FloatingActionButton(onClick = abort) {
+                    Icon(
+                        Icons.Rounded.ArrowBack,
+                        contentDescription = stringResource(R.string.operation_cancel)
+                    )
                 }
-                Button(
-                    onClick = abort, modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(5.dp)
-                ) {
-                    Text(stringResource(R.string.operation_cancel))
+                if (isValid) {
+                    FloatingActionButton(onClick = createEntry) {
+                        Icon(
+                            Icons.Rounded.Add,
+                            contentDescription = stringResource(R.string.operation_submit)
+                        )
+                    }
                 }
             }
         }

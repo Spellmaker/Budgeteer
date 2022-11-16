@@ -29,7 +29,7 @@
     <string name="label_input_currency">Währung</string>
     <string name="label_example_category">Beispielkategorie</string>
     <string name="operation_start_editing">Anzuzeigende Felder auswählen</string>
-    <string name="operation_stop_editing">Bearbeiten stoppen</string>
+    <string name="operation_stop_editing">Editor verstecken</string>
     <string name="operation_save_changes">Änderungen speichern</string>
     <string name="application_title">Budgeteer%1$s</string>
     <string name="operation_settings">Einstellungen</string>

@@ -125,7 +125,6 @@ fun OverviewWidget(
                             Icons.Rounded.Settings,
                             contentDescription = stringResource(R.string.operation_settings)
                         )
-
                     }
                     FloatingActionButton(onClick = onAddCategory) {
                         Icon(

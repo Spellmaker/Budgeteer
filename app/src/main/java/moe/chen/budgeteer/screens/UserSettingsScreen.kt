@@ -3,9 +3,9 @@ package moe.chen.budgeteer.screens
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -41,6 +41,7 @@ fun UserSettingsScreen(
         }) {
             UserSettingEditor(
                 settings.value!!,
+                goBack = { navController.popBackStack() }
             ) {
                 model.updateSettings(it)
                 navController.popBackStack()
@@ -59,6 +60,7 @@ fun UserSettingEditor(
             secret = ""
         )
     ),
+    goBack: () -> Unit = {},
     updateSettings: (UserSetting) -> Unit = {},
 ) {
     var orderVisible by remember { mutableStateOf(false) }
@@ -117,7 +119,7 @@ fun UserSettingEditor(
                     .sortedBy { it.second }
                     .map { it.first },
 
-            ) {
+                ) {
                 UserSettingViewModel.makeConverter(currentState.currencyCode).format(it)
             }
         }
@@ -160,19 +162,38 @@ fun UserSettingEditor(
                 }
             }
         }
-        Button(
-            onClick = {
-                val newSettings = categoryElements.fold(
-                    currentSettings.copy(
-                        currency = currentState.currencyCode,
-                    )
-                ) { settings, element -> element.first.setter(settings, element.second) }
-                updateSettings(newSettings)
-            }, modifier = Modifier
-                .padding(5.dp)
+
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
                 .fillMaxWidth()
+                .padding(10.dp),
+            verticalArrangement = Arrangement.Bottom
         ) {
-            Text(stringResource(R.string.operation_save_changes))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                FloatingActionButton(onClick = goBack) {
+                    Icon(
+                        Icons.Rounded.ArrowBack,
+                        contentDescription = stringResource(R.string.operation_cancel)
+                    )
+                }
+                FloatingActionButton(onClick = {
+                    val newSettings = categoryElements.fold(
+                        currentSettings.copy(
+                            currency = currentState.currencyCode,
+                        )
+                    ) { settings, element -> element.first.setter(settings, element.second) }
+                    updateSettings(newSettings)
+                }) {
+                    Icon(
+                        Icons.Rounded.Save,
+                        contentDescription = stringResource(R.string.operation_save_changes)
+                    )
+                }
+            }
         }
     }
 }

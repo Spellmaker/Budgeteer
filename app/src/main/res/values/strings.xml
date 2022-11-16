@@ -28,7 +28,7 @@
     <string name="label_input_currency">Input currency</string>
     <string name="label_example_category">Example category</string>
     <string name="operation_start_editing">Edit computed fields per category</string>
-    <string name="operation_stop_editing">Stop editing computed fields per category</string>
+    <string name="operation_stop_editing">Hide editor</string>
     <string name="operation_save_changes">Save Changes</string>
     <string name="application_title">Budgeteer%1$s</string>
     <string name="operation_settings">Settings</string>

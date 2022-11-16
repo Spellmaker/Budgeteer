@@ -6,16 +6,19 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import moe.chen.budgeteer.R
 import moe.chen.budgeteer.navigation.BudgeteerScreens
 import moe.chen.budgeteer.room.BudgetEntry
 import moe.chen.budgeteer.room.User
@@ -45,25 +48,35 @@ fun CategoryDetailsScreen(
 
         MainViewWidget(logout = logout) {
             Column(
-                modifier = Modifier.fillMaxHeight()
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(5.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(category.value?.label ?: "null", modifier = Modifier.padding(5.dp))
+                    Text(
+                        category.value?.label ?: "null",
+                        modifier = Modifier.padding(5.dp),
+                        style = MaterialTheme.typography.h6
+                    )
                     Row(
                         horizontalArrangement = Arrangement.End,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Button(onClick = {
+
+                        FloatingActionButton(onClick = {
                             navController.navigate(
                                 BudgeteerScreens.AddCategoryScreen.name +
                                         "/${user.uid!!}/${category.value?.cid}"
                             )
-                        }, modifier = Modifier.padding(5.dp)) {
-                            Text("Edit")
+                        }) {
+                            Icon(
+                                Icons.Rounded.Edit,
+                                contentDescription = stringResource(R.string.operation_edit)
+                            )
                         }
                     }
                 }
@@ -74,6 +87,26 @@ fun CategoryDetailsScreen(
                             it,
                             { model.removeEntry(it) },
                             { n -> convertDefault.value?.format(n) ?: n.toString() })
+                    }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        FloatingActionButton(onClick = { navController.popBackStack() }) {
+                            Icon(
+                                Icons.Rounded.ArrowBack,
+                                contentDescription = stringResource(R.string.operation_cancel)
+                            )
+                        }
                     }
                 }
             }
@@ -98,11 +131,23 @@ fun ExpenseWidget(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable(onClick = onClick),
+                .clickable(onClick = onClick)
+                .padding(5.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(DateTimeFormatter.ISO_ZONED_DATE_TIME.format(item.date))
-            Text(formatter(item.amount))
+            Text(
+
+                DateTimeFormatter.ISO_ZONED_DATE_TIME.format(item.date),
+                modifier = Modifier.padding(
+                    PaddingValues(horizontal = 10.dp)
+                )
+            )
+            Text(
+                formatter(item.amount),
+                modifier = Modifier.padding(
+                    PaddingValues(horizontal = 10.dp)
+                )
+            )
         }
     }
 }
