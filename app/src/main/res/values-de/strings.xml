@@ -39,4 +39,5 @@
     <string name="operation_down">Runter</string>
     <string name="modify_category">Kategorie anpassen</string>
     <string name="operation_edit">Bearbeiten</string>
+    <string name="operation_delete">Löschen</string>
 </resources>

@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -62,23 +63,6 @@ fun CategoryDetailsScreen(
                         modifier = Modifier.padding(5.dp),
                         style = MaterialTheme.typography.h6
                     )
-                    Row(
-                        horizontalArrangement = Arrangement.End,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-
-                        FloatingActionButton(onClick = {
-                            navController.navigate(
-                                BudgeteerScreens.AddCategoryScreen.name +
-                                        "/${user.uid!!}/${category.value?.cid}"
-                            )
-                        }) {
-                            Icon(
-                                Icons.Rounded.Edit,
-                                contentDescription = stringResource(R.string.operation_edit)
-                            )
-                        }
-                    }
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 LazyColumn {
@@ -105,6 +89,17 @@ fun CategoryDetailsScreen(
                             Icon(
                                 Icons.Rounded.ArrowBack,
                                 contentDescription = stringResource(R.string.operation_cancel)
+                            )
+                        }
+                        FloatingActionButton(onClick = {
+                            navController.navigate(
+                                BudgeteerScreens.AddCategoryScreen.name +
+                                        "/${user.uid!!}/${category.value?.cid}"
+                            )
+                        }) {
+                            Icon(
+                                Icons.Rounded.Edit,
+                                contentDescription = stringResource(R.string.operation_edit)
                             )
                         }
                     }
@@ -135,8 +130,14 @@ fun ExpenseWidget(
                 .padding(5.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            Icon(
+                Icons.Rounded.Delete,
+                contentDescription = stringResource(R.string.operation_delete),
+                modifier = Modifier.padding(
+                    PaddingValues(horizontal = 10.dp)
+                )
+            )
             Text(
-
                 DateTimeFormatter.ISO_ZONED_DATE_TIME.format(item.date),
                 modifier = Modifier.padding(
                     PaddingValues(horizontal = 10.dp)

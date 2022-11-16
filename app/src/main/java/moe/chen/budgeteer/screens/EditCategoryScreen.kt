@@ -1,14 +1,12 @@
 package moe.chen.budgeteer.screens
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Save
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -51,18 +49,20 @@ fun EditCategoryScreen(
         if (convertDefault.value != null) {
             Column(
                 modifier = Modifier
-                    .padding(it)
+                    .padding(5.dp)
                     .fillMaxWidth()
             ) {
                 if (existingCategory.value == null) {
                     Text(
                         stringResource(R.string.add_new_category),
-                        style = MaterialTheme.typography.caption
+                        style = MaterialTheme.typography.h6,
+                        modifier = Modifier.padding(5.dp)
                     )
                 } else {
                     Text(
                         stringResource(R.string.modify_category),
-                        style = MaterialTheme.typography.caption
+                        style = MaterialTheme.typography.h6,
+                        modifier = Modifier.padding(5.dp)
                     )
                 }
 
@@ -103,6 +103,50 @@ fun EditCategoryScreen(
                         }
                     }
                 )
+
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        FloatingActionButton(onClick = { navController.popBackStack() }) {
+                            Icon(
+                                Icons.Rounded.ArrowBack,
+                                contentDescription = stringResource(R.string.operation_cancel)
+                            )
+                        }
+                        FloatingActionButton(onClick = {
+                            if (budget.value != null) {
+                                if (existingCategory.value == null) {
+                                    viewModel.addCategory(label.value, budget.value!!, user.uid!!)
+                                } else {
+                                    viewModel.updateCategory(
+                                        existingCategory.value!!.cid!!,
+                                        existingCategory.value!!.uid,
+                                        label.value,
+                                        budget.value!!,
+                                    )
+                                }
+                                navController.navigate(
+                                    BudgeteerScreens.OverviewScreen.name +
+                                            "/${user.uid!!}"
+                                )
+                            }
+                        }) {
+                            Icon(
+                                Icons.Rounded.Save,
+                                contentDescription = stringResource(R.string.operation_save_changes)
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -144,7 +188,7 @@ fun EditWidget(
         ),
         isError = currencyIsError,
     )
-    Button(
+    /*Button(
         onClick = create,
         enabled = !currencyIsError,
         modifier = Modifier
@@ -152,5 +196,5 @@ fun EditWidget(
             .padding(5.dp)
     ) {
         Text(stringResource(R.string.operation_submit))
-    }
+    }*/
 }
