@@ -73,7 +73,9 @@ fun EditCategoryScreen(
                     updateBudget = { newBudget ->
                         budgetString = newBudget
                         try {
-                            budget.value = newBudget.toDouble()
+                            budget.value = newBudget
+                                .replace(",", ".")
+                                .toDouble()
                         } catch (t: Throwable) {
                             // noop
                             budget.value = null
