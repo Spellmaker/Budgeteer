@@ -30,7 +30,6 @@ fun CategoryDetailsScreen(
     categoryId: Int,
     user: User,
     logout: () -> Unit,
-    accessSettings: () -> Unit,
 ) {
     val model = hiltViewModel<CategoryDetailViewModel>()
     model.listenForCategory(categoryId)
@@ -44,7 +43,7 @@ fun CategoryDetailsScreen(
         val entries =
             model.categoryEntryFlow(category.value!!).collectAsState(initial = emptyList())
 
-        MainViewWidget(logout = logout, settings = accessSettings) {
+        MainViewWidget(logout = logout) {
             Column(
                 modifier = Modifier.fillMaxHeight()
             ) {

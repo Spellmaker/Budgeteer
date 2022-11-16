@@ -12,7 +12,6 @@ import moe.chen.budgeteer.R
 fun MainViewWidget(
     title: String = "",
     logout: () -> Unit,
-    settings: () -> Unit,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val addendum = if (title.isEmpty()) {
@@ -33,9 +32,6 @@ fun MainViewWidget(
                         text = stringResource(R.string.application_title, addendum),
                         style = MaterialTheme.typography.h6
                     )
-                    Button(onClick = settings) {
-                        Text(stringResource(R.string.operation_settings))
-                    }
                     Button(onClick = logout) {
                         Text(stringResource(R.string.operation_logout))
                     }

@@ -28,7 +28,6 @@ import moe.chen.budgeteer.widgets.MainViewWidget
 fun InputEntryScreen(
     navController: NavController,
     logout: () -> Unit,
-    accessSettings: () -> Unit,
 ) {
     var amountDouble by remember { mutableStateOf(0.0) }
     val model = hiltViewModel<InputEntryViewModel>()
@@ -40,7 +39,7 @@ fun InputEntryScreen(
     }
     var isValid by remember { mutableStateOf(true) }
 
-    MainViewWidget(logout = logout, settings = accessSettings) {
+    MainViewWidget(logout = logout) {
         if (category.value != null) {
             InputWidget(
                 category = category.value,

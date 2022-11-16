@@ -38,7 +38,6 @@ fun OverviewScreen(
     navController: NavController,
     user: User,
     logout: () -> Unit,
-    accessSettings: () -> Unit,
 ) {
     val model = hiltViewModel<OverviewViewModel>()
     val settingsModel = hiltViewModel<UserSettingViewModel>()
@@ -73,7 +72,11 @@ fun OverviewScreen(
                     )
             },
             formatter = { (converter.value?.format(it) ?: it.toString()) },
-            accessSettings = accessSettings,
+            accessSettings = {
+                navController.navigate(
+                    "${BudgeteerScreens.UserSettingsScreen.name}/${user.uid!!}"
+                )
+            },
             fields = allCategories.map { it to it.extractor(settings.value!!) }
                 .filter { it.second >= 0 }
                 .sortedBy { it.second }
@@ -94,7 +97,7 @@ fun OverviewWidget(
     fields: List<ComputedField>,
     formatter: @Composable (Double) -> String,
 ) {
-    MainViewWidget(logout = logout, settings = accessSettings) {
+    MainViewWidget(logout = logout) {
         Column(
             modifier = Modifier.padding(it)
         ) {
@@ -112,6 +115,14 @@ fun OverviewWidget(
                     .padding(4.dp)
             ) {
                 Text(stringResource(R.string.operation_add_category))
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Button(
+                onClick = accessSettings, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp)
+            ) {
+                Text(stringResource(R.string.operation_settings))
             }
         }
     }

@@ -31,12 +31,7 @@ fun BudgeteerNavigation() {
             VerifyUserData(
                 navController = navController,
             ) { user, logout ->
-                OverviewScreen(navController = navController, user = user, logout = logout,
-                    accessSettings = {
-                        navController.navigate(
-                            "${BudgeteerScreens.UserSettingsScreen.name}/${user.uid!!}"
-                        )
-                    })
+                OverviewScreen(navController = navController, user = user, logout = logout)
             }
         }
         composable(
@@ -49,12 +44,7 @@ fun BudgeteerNavigation() {
             VerifyUserData(
                 navController = navController,
             ) { user, logout ->
-                EditCategoryScreen(navController = navController, user = user, logout = logout,
-                    accessSettings = {
-                        navController.navigate(
-                            "${BudgeteerScreens.UserSettingsScreen.name}/${user.uid!!}"
-                        )
-                    })
+                EditCategoryScreen(navController = navController, user = user, logout = logout)
             }
         }
         composable(
@@ -73,11 +63,6 @@ fun BudgeteerNavigation() {
                     categoryId = category!!,
                     logout = logout,
                     user = user,
-                    accessSettings = {
-                        navController.navigate(
-                            "${BudgeteerScreens.UserSettingsScreen.name}/${user.uid!!}"
-                        )
-                    }
                 )
             }
         }
@@ -91,11 +76,6 @@ fun BudgeteerNavigation() {
                 InputEntryScreen(
                     navController = navController,
                     logout = logout,
-                    accessSettings = {
-                        navController.navigate(
-                            "${BudgeteerScreens.UserSettingsScreen.name}/${user.uid!!}"
-                        )
-                    }
                 )
             }
         }
@@ -103,10 +83,7 @@ fun BudgeteerNavigation() {
             route = "${BudgeteerScreens.UserSettingsScreen.name}/{user}",
             arguments = listOf(navArgument("user") { type = NavType.IntType })
         ) {
-            UserSettingsScreen(navController = navController,
-                accessSettings = {
-                    navController.navigate(BudgeteerScreens.UserSettingsScreen.name)
-                })
+            UserSettingsScreen(navController = navController)
         }
     }
 }

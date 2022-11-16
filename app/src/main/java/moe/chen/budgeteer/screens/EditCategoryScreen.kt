@@ -31,7 +31,6 @@ fun EditCategoryScreen(
     navController: NavController,
     user: User,
     logout: () -> Unit,
-    accessSettings: () -> Unit,
 ) {
     val viewModel = hiltViewModel<AddCategoryViewModel>()
 
@@ -48,7 +47,7 @@ fun EditCategoryScreen(
     val budget = remember { mutableStateOf<Double?>(existingCategory.value?.budget ?: 0.0) }
     var budgetString by remember { mutableStateOf(formatCompact(budget.value!!)) }
 
-    MainViewWidget(logout = logout, settings = accessSettings) {
+    MainViewWidget(logout = logout) {
         if (convertDefault.value != null) {
             Column(
                 modifier = Modifier

@@ -29,7 +29,6 @@ import java.util.*
 @Composable
 fun UserSettingsScreen(
     navController: NavController,
-    accessSettings: () -> Unit,
 ) {
     val model = hiltViewModel<UserSettingViewModel>()
     val settings = model.settings.collectAsState()
@@ -39,7 +38,7 @@ fun UserSettingsScreen(
         MainViewWidget(logout = {
             model.setActiveUser(User(null, "logout", "logout"))
             navController.navigate(BudgeteerScreens.LoginScreen.name)
-        }, settings = accessSettings) {
+        }) {
             UserSettingEditor(
                 settings.value!!,
             ) {
