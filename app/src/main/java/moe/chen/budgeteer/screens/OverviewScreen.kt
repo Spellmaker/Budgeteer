@@ -41,8 +41,8 @@ fun OverviewScreen(
     accessSettings: () -> Unit,
 ) {
     val model = hiltViewModel<OverviewViewModel>()
-    model.listenForUser(user)
     val settingsModel = hiltViewModel<UserSettingViewModel>()
+
     val settings = settingsModel.settings.collectAsState()
     if (settings.value == null) {
         Log.d("OverviewScreen", "creating default settings")

@@ -55,24 +55,33 @@ class UserSettingViewModel @Inject constructor(
                     Log.d("UserSettingViewModel", "emitting settings $entry")
                     _settings.value = entry
                     if (entry != null && entry != invalidSettings) {
-                        Log.d("UserSettingViewModel", "Updating converters with new symbol ${entry.currency}")
+                        Log.d(
+                            "UserSettingViewModel",
+                            "Updating converters with new symbol ${entry.currency}"
+                        )
                         updateConverters(entry)
                     }
                 }
         }
     }
 
+    companion object {
+        fun makeConverter(currency: String): NumberFormat {
+            val currencyToUse = if (currency == "€") {
+                "EUR"
+            } else {
+                currency
+            }
+            val format1 = NumberFormat.getCurrencyInstance()
+            format1.maximumFractionDigits = 2
+            format1.currency = Currency.getInstance(currencyToUse)
+            return format1
+        }
+    }
+
 
     private fun updateConverters(currentSettings: UserSetting) {
-        val currencyToUse = if (currentSettings.currency == "€") {
-            "EUR"
-        } else {
-            currentSettings.currency
-        }
-        val format1 = NumberFormat.getCurrencyInstance()
-        format1.maximumFractionDigits = 2
-        format1.currency = Currency.getInstance(currencyToUse)
-        _converterDefault.value = format1
+        _converterDefault.value = makeConverter(currentSettings.currency)
     }
 
     fun createDefaultSetting() {

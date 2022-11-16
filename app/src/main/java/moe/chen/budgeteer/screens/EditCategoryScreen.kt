@@ -3,21 +3,23 @@ package moe.chen.budgeteer.screens
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import moe.chen.budgeteer.R
+import moe.chen.budgeteer.formatCompact
 import moe.chen.budgeteer.navigation.BudgeteerScreens
 import moe.chen.budgeteer.room.User
 import moe.chen.budgeteer.viewmodel.AddCategoryViewModel
@@ -41,8 +43,9 @@ fun EditCategoryScreen(
         return
     }
 
-    val label = remember { mutableStateOf<String>(existingCategory.value?.label ?: "") }
-    val budget = remember { mutableStateOf<Double>(existingCategory.value?.budget ?: 0.0) }
+    val label = remember { mutableStateOf(existingCategory.value?.label ?: "") }
+    val budget = remember { mutableStateOf<Double?>(existingCategory.value?.budget ?: 0.0) }
+    var budgetString by remember { mutableStateOf(formatCompact(budget.value!!)) }
 
     MainViewWidget(logout = logout, settings = accessSettings) {
         if (convertDefault.value != null) {
@@ -66,29 +69,33 @@ fun EditCategoryScreen(
                 EditWidget(
                     label = label.value,
                     updateLabel = { newLabel -> label.value = newLabel },
-                    budget = convertDefault.value?.format(budget.value) ?: budget.toString(),
+                    budget = budgetString,
                     updateBudget = { newBudget ->
+                        budgetString = newBudget
                         try {
-                            budget.value = convertDefault.value?.parse(newBudget)!!.toDouble()
+                            budget.value = newBudget.toDouble()
                         } catch (t: Throwable) {
                             // noop
+                            budget.value = null
                         }
                     },
                     create = {
-                        if (existingCategory.value == null) {
-                            viewModel.addCategory(label.value, budget.value, user.uid!!)
-                        } else {
-                            viewModel.updateCategory(
-                                existingCategory.value!!.cid!!,
-                                existingCategory.value!!.uid,
-                                label.value,
-                                budget.value,
+                        if (budget.value != null) {
+                            if (existingCategory.value == null) {
+                                viewModel.addCategory(label.value, budget.value!!, user.uid!!)
+                            } else {
+                                viewModel.updateCategory(
+                                    existingCategory.value!!.cid!!,
+                                    existingCategory.value!!.uid,
+                                    label.value,
+                                    budget.value!!,
+                                )
+                            }
+                            navController.navigate(
+                                BudgeteerScreens.OverviewScreen.name +
+                                        "/${user.uid!!}"
                             )
                         }
-                        navController.navigate(
-                            BudgeteerScreens.OverviewScreen.name +
-                                    "/${user.uid!!}"
-                        )
                     }
                 )
             }
@@ -112,7 +119,8 @@ fun EditWidget(
         label = { Text(stringResource(R.string.category_name)) },
         modifier = Modifier
             .padding(5.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
     )
     TextField(
         singleLine = true,
@@ -122,8 +130,13 @@ fun EditWidget(
         modifier = Modifier
             .padding(5.dp)
             .fillMaxWidth(),
-
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Decimal,
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = { create() }
         )
+    )
     Button(
         onClick = create,
         modifier = Modifier

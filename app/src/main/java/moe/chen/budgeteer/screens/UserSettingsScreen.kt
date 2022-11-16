@@ -33,7 +33,6 @@ fun UserSettingsScreen(
 ) {
     val model = hiltViewModel<UserSettingViewModel>()
     val settings = model.settings.collectAsState()
-    val converter = model.converterDefault.collectAsState()
     if (settings.value == null) {
         model.createDefaultSetting()
     } else if (settings.value != model.invalidSettings) {
@@ -43,7 +42,6 @@ fun UserSettingsScreen(
         }, settings = accessSettings) {
             UserSettingEditor(
                 settings.value!!,
-                { converter.value?.format(it) ?: it.toString() },
             ) {
                 model.updateSettings(it)
                 navController.popBackStack()
@@ -62,7 +60,6 @@ fun UserSettingEditor(
             secret = ""
         )
     ),
-    formatter: (Double) -> String = { it.toString() },
     updateSettings: (UserSetting) -> Unit = {},
 ) {
     var orderVisible by remember { mutableStateOf(false) }
@@ -122,7 +119,7 @@ fun UserSettingEditor(
                     .map { it.first },
 
             ) {
-                formatter(it)
+                UserSettingViewModel.makeConverter(currentState.currencyCode).format(it)
             }
         }
 
