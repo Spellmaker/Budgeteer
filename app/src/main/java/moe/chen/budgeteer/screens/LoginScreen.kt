@@ -58,7 +58,7 @@ fun LoginScreen(
             modifier = Modifier,
             username = username,
             password = password,
-            updateUsername = { username = it },
+            updateUsername = { username = it.trim() },
             updatePassword = { password = it },
             login = {
                 Log.d("login", "clicked on login button, setting to $username, $password")
