@@ -73,6 +73,7 @@ fun LoginScreen(
                             successString,
                             Toast.LENGTH_SHORT
                         ).show()
+                        userViewModel.setActiveUser(User(it.toInt(), username, password))
                     },
                     onError = {
                         Toast.makeText(

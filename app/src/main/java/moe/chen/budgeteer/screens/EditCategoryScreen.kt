@@ -188,13 +188,4 @@ fun EditWidget(
         ),
         isError = currencyIsError,
     )
-    /*Button(
-        onClick = create,
-        enabled = !currencyIsError,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(5.dp)
-    ) {
-        Text(stringResource(R.string.operation_submit))
-    }*/
 }
