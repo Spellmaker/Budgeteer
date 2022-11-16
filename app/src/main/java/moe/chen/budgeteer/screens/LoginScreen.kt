@@ -99,7 +99,7 @@ fun LoginWidget(
     createUser: () -> Unit = {},
 ) {
     Surface(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().fillMaxHeight(),
         color = MaterialTheme.colors.background,
     ) {
         Card(modifier = Modifier.padding(20.dp)) {
