@@ -109,6 +109,7 @@ fun InputWidget(
             TextField(
                 value = amount,
                 onValueChange = setAmount,
+                isError = !isValid,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(5.dp),

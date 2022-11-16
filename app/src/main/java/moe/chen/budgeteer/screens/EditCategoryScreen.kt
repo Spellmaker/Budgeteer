@@ -39,6 +39,7 @@ fun EditCategoryScreen(
     val convertDefault = settingsModel.converterDefault.collectAsState()
     val existingCategory = viewModel.category.collectAsState()
 
+    var currencyIsError by remember { mutableStateOf(false) }
     if (existingCategory.value == viewModel.invalidCategory) {
         return
     }
@@ -67,6 +68,7 @@ fun EditCategoryScreen(
                 }
 
                 EditWidget(
+                    currencyIsError = currencyIsError,
                     label = label.value,
                     updateLabel = { newLabel -> label.value = newLabel.trim() },
                     budget = budgetString,
@@ -76,9 +78,11 @@ fun EditCategoryScreen(
                             budget.value = newBudget
                                 .replace(",", ".")
                                 .toDouble()
+                            currencyIsError = false
                         } catch (t: Throwable) {
                             // noop
                             budget.value = null
+                            currencyIsError = true
                         }
                     },
                     create = {
@@ -112,7 +116,8 @@ fun EditWidget(
     budget: String = "",
     updateLabel: (String) -> Unit = {},
     updateBudget: (String) -> Unit = {},
-    create: () -> Unit = {}
+    create: () -> Unit = {},
+    currencyIsError: Boolean = false,
 ) {
     TextField(
         singleLine = true,
@@ -137,10 +142,12 @@ fun EditWidget(
         ),
         keyboardActions = KeyboardActions(
             onDone = { create() }
-        )
+        ),
+        isError = currencyIsError,
     )
     Button(
         onClick = create,
+        enabled = !currencyIsError,
         modifier = Modifier
             .fillMaxWidth()
             .padding(5.dp)
