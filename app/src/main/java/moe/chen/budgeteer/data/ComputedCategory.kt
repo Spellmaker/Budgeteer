@@ -7,8 +7,7 @@ import moe.chen.budgeteer.R
 import moe.chen.budgeteer.room.BudgetEntry
 import moe.chen.budgeteer.room.Category
 import moe.chen.budgeteer.room.UserSetting
-import moe.chen.budgeteer.ui.theme.NotOkColor
-import moe.chen.budgeteer.ui.theme.OkColor
+import moe.chen.budgeteer.ui.theme.*
 import java.time.LocalDateTime
 import java.time.YearMonth
 
@@ -18,7 +17,7 @@ data class ComputedField(
     val extractor: (UserSetting) -> Int,
     val setter: (UserSetting, Int) -> UserSetting,
     val computation: (Category, List<BudgetEntry>) -> Double,
-    val colorSelector: (Category, Double) -> Color,
+    val colorSelector: (Category, Double, Boolean) -> Color,
 )
 
 val BudgetField = ComputedField(
@@ -27,7 +26,13 @@ val BudgetField = ComputedField(
     extractor = { it.catShowBudget },
     setter = { setting, pos -> setting.copy(catShowBudget = pos) },
     computation = { category, _ -> category.budget },
-    colorSelector = { _, _ -> Color.Blue }
+    colorSelector = { _, _, darkMode ->
+        if (darkMode) {
+            BaseDarkMode
+        } else {
+            BaseLightMode
+        }
+    }
 )
 
 val CurrentField = ComputedField(
@@ -36,9 +41,13 @@ val CurrentField = ComputedField(
     extractor = { it.catShowCurrent },
     setter = { setting, pos -> setting.copy(catShowCurrent = pos) },
     computation = { _, entries -> entries.sumOf { it.amount } },
-    colorSelector = { category, value ->
+    colorSelector = { category, value, darkMode ->
         if (category.budget <= value) {
-            NotOkColor
+            if (darkMode) {
+                NotOkColorDarkMode
+            } else {
+                NotOkColor
+            }
         } else {
             OkColor
         }
@@ -54,13 +63,19 @@ val TrendField = ComputedField(
         val sum = entries.sumOf { it.amount }
         val today = LocalDateTime.now()
         val monthLength = YearMonth.of(today.year, today.month).lengthOfMonth()
-        Log.d("TrendField", "length of month: $monthLength " +
-                "day of month: ${today.dayOfMonth}")
+        Log.d(
+            "TrendField", "length of month: $monthLength " +
+                    "day of month: ${today.dayOfMonth}"
+        )
         ((sum / today.dayOfMonth) * monthLength)
     },
-    colorSelector = { category, value ->
+    colorSelector = { category, value, darkMode ->
         if (category.budget <= value) {
-            NotOkColor
+            if (darkMode) {
+                NotOkColorDarkMode
+            } else {
+                NotOkColor
+            }
         } else {
             OkColor
         }
@@ -78,9 +93,13 @@ val SpendPerDayField = ComputedField(
         val monthLength = YearMonth.of(today.year, today.month).lengthOfMonth()
         ((category.budget - sum) / (monthLength - today.dayOfMonth))
     },
-    colorSelector = { _, value ->
+    colorSelector = { _, value, darkMode ->
         if (value <= 0.0) {
-            NotOkColor
+            if (darkMode) {
+                NotOkColorDarkMode
+            } else {
+                NotOkColor
+            }
         } else {
             OkColor
         }
@@ -99,9 +118,13 @@ val UnspendMoney = ComputedField(
         val budgetUntilNow = (category.budget / monthLength) * today.dayOfMonth
         budgetUntilNow - sum
     },
-    colorSelector = { _, value ->
+    colorSelector = { _, value, darkMode ->
         if (value <= 0.0) {
-            NotOkColor
+            if (darkMode) {
+                NotOkColorDarkMode
+            } else {
+                NotOkColor
+            }
         } else {
             OkColor
         }

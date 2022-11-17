@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -129,112 +130,58 @@ fun InputWidget(
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
+
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier,
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Column(modifier = Modifier.weight(1f, true)) {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    AmountButton(
-                        amount = -10.0,
-                        changeAmount = changeAmount,
-                        formatter = formatterCompact,
-                        enabled = isValid
-                    )
-                    AmountButton(
-                        amount = -5.0,
-                        changeAmount = changeAmount,
-                        formatter = formatterCompact,
-                        enabled = isValid
-                    )
-                    AmountButton(
-                        amount = -1.0,
-                        changeAmount = changeAmount,
-                        formatter = formatterCompact,
-                        enabled = isValid
-                    )
-                }
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    AmountButton(
-                        amount = -0.5,
-                        changeAmount = changeAmount,
-                        formatter = formatterCompact,
-                        enabled = isValid
-                    )
-                    AmountButton(
-                        amount = -0.1,
-                        changeAmount = changeAmount,
-                        formatter = formatterCompact,
-                        enabled = isValid
-                    )
-                    AmountButton(
-                        amount = -0.01,
-                        changeAmount = changeAmount,
-                        formatter = formatterCompact,
-                        enabled = isValid
-                    )
-                }
+            Column(
+                modifier = Modifier.weight(1f, true),
+                horizontalAlignment = Alignment.Start,
+            ) {
+                AmountButton(isValid, -50.0, changeAmount, formatterCompact)
+                AmountButton(isValid, -5.0, changeAmount, formatterCompact)
+                AmountButton(isValid, -0.5, changeAmount, formatterCompact)
             }
-            Column(modifier = Modifier.weight(1f, true)) {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    AmountButton(
-                        amount = 10.0,
-                        changeAmount = changeAmount,
-                        formatter = formatterCompact,
-                        enabled = isValid
-                    )
-                    AmountButton(
-                        amount = 5.0,
-                        changeAmount = changeAmount,
-                        formatter = formatterCompact,
-                        enabled = isValid
-                    )
-                    AmountButton(
-                        amount = 1.0,
-                        changeAmount = changeAmount,
-                        formatter = formatterCompact,
-                        enabled = isValid
-                    )
-                }
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    AmountButton(
-                        amount = 0.5,
-                        changeAmount = changeAmount,
-                        formatter = formatterCompact,
-                        enabled = isValid
-                    )
-                    AmountButton(
-                        amount = 0.1,
-                        changeAmount = changeAmount,
-                        formatter = formatterCompact,
-                        enabled = isValid
-                    )
-                    AmountButton(
-                        amount = 0.01,
-                        changeAmount = changeAmount,
-                        formatter = formatterCompact,
-                        enabled = isValid
-                    )
-                }
+            Column(
+                modifier = Modifier.weight(1f, true),
+                horizontalAlignment = Alignment.Start,
+            ) {
+                AmountButton(isValid, -10.0, changeAmount, formatterCompact)
+                AmountButton(isValid, -1.0, changeAmount, formatterCompact)
+                AmountButton(isValid, -0.1, changeAmount, formatterCompact)
+            }
+
+            Spacer(
+                modifier = Modifier
+                    .width(20.dp)
+            )
+
+            Column(
+                modifier = Modifier.weight(1f, true),
+                horizontalAlignment = Alignment.End,
+            ) {
+                AmountButton(isValid, 50.0, changeAmount, formatterCompact)
+                AmountButton(isValid, 5.0, changeAmount, formatterCompact)
+                AmountButton(isValid, 0.5, changeAmount, formatterCompact)
+
+            }
+
+            Column(
+                modifier = Modifier.weight(1f, true),
+                horizontalAlignment = Alignment.End,
+            ) {
+                AmountButton(isValid, 10.0, changeAmount, formatterCompact)
+                AmountButton(isValid, 1.0, changeAmount, formatterCompact)
+                AmountButton(isValid, 0.5, changeAmount, formatterCompact)
+
             }
         }
 
         Column(
             modifier = Modifier
-                .fillMaxHeight()
                 .fillMaxWidth()
+                .fillMaxHeight()
                 .padding(10.dp),
             verticalArrangement = Arrangement.Bottom
         ) {
@@ -269,12 +216,13 @@ fun AmountButton(
     formatter: (Double) -> String
 ) {
     Surface(
-        shape = MaterialTheme.shapes.small,
+        elevation = 2.dp,
+        shape = CircleShape,//MaterialTheme.shapes.small,
         border = ButtonDefaults.outlinedBorder,
         modifier = Modifier
-            .width(64.dp)
-            .height(50.dp)
-            .padding(2.dp)
+            .width(100.dp)
+            .height(74.dp)
+            .padding(5.dp)
             .let {
                 if (enabled) {
                     it
@@ -291,7 +239,7 @@ fun AmountButton(
         ) {
             Text(
                 formatter(amount),
-                fontSize = 12.sp,
+                fontSize = 20.sp,
                 modifier = Modifier
                     .clickable(onClick = {
                         if (enabled) {
