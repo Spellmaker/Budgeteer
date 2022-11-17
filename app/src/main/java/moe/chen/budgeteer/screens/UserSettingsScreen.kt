@@ -32,9 +32,7 @@ fun UserSettingsScreen(
 ) {
     val model = hiltViewModel<UserSettingViewModel>()
     val settings = model.settings.collectAsState()
-    if (settings.value == null) {
-        model.createDefaultSetting()
-    } else if (settings.value != model.invalidSettings) {
+    if (settings.value != null && settings.value != model.invalidSettings) {
         MainViewWidget(logout = {
             model.setActiveUser(User(null, "logout", "logout"))
             navController.navigate(BudgeteerScreens.LoginScreen.name)
@@ -72,13 +70,7 @@ fun UserSettingEditor(
         var currentState by remember {
             mutableStateOf(
                 try {
-                    Currency.getInstance(
-                        if (currentSettings.currency == "€") {
-                            "EUR"
-                        } else {
-                            currentSettings.currency
-                        }
-                    )
+                    Currency.getInstance(currentSettings.currency)
                 } catch (e: Exception) {
                     Log.d("UserSettingsScreen", e.message ?: "error")
                     Currency.getInstance("EUR")

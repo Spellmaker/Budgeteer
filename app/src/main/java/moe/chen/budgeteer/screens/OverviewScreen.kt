@@ -44,10 +44,7 @@ fun OverviewScreen(
     val settingsModel = hiltViewModel<UserSettingViewModel>()
 
     val settings = settingsModel.settings.collectAsState()
-    if (settings.value == null) {
-        Log.d("OverviewScreen", "creating default settings")
-        settingsModel.createDefaultSetting()
-    } else if (settings.value != settingsModel.invalidSettings) {
+    if (settings.value != null && settings.value != settingsModel.invalidSettings) {
         val categories = model.categories.collectAsState()
         val converter = settingsModel.converterDefault.collectAsState()
 

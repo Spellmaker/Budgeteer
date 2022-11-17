@@ -25,7 +25,7 @@ import java.util.*
 @Preview(showBackground = true)
 @Composable
 fun WidgetPreview() {
-    val elements = Currency.getAvailableCurrencies().toList()//listOf("AA", "BB", "AC", "AD")
+    val elements = Currency.getAvailableCurrencies().toList()
     var currentState by remember { mutableStateOf(Currency.getInstance("EUR")) }
     FilteredSelectionWidget<Currency>(
         label = "Input Currency",

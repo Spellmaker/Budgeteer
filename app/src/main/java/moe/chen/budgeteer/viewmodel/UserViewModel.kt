@@ -13,6 +13,8 @@ import kotlinx.coroutines.runBlocking
 import moe.chen.budgeteer.data.PreferenceRepository
 import moe.chen.budgeteer.room.User
 import moe.chen.budgeteer.room.UserRepository
+import moe.chen.budgeteer.room.UserSetting
+import moe.chen.budgeteer.room.UserSettingDao
 import java.util.*
 import javax.inject.Inject
 
@@ -20,6 +22,7 @@ import javax.inject.Inject
 class UserViewModel @Inject constructor(
     private val preferenceRepository: PreferenceRepository,
     private val userRepository: UserRepository,
+    private val settingDao: UserSettingDao,
 ) : ViewModel() {
     private val _preferenceUser = MutableStateFlow<User?>(null)
     private val _validatedUser = MutableStateFlow<User?>(null)
@@ -65,6 +68,7 @@ class UserViewModel @Inject constructor(
     ) = viewModelScope.launch {
         try {
             val id = userRepository.createUser(user)
+            settingDao.createSettings(UserSetting.getDefault(id.toInt()))
             onSuccess(id)
         } catch (t: Throwable) {
             onError()

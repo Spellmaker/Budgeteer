@@ -67,14 +67,9 @@ class UserSettingViewModel @Inject constructor(
 
     companion object {
         fun makeConverter(currency: String): NumberFormat {
-            val currencyToUse = if (currency == "€") {
-                "EUR"
-            } else {
-                currency
-            }
             val format1 = NumberFormat.getCurrencyInstance()
             format1.maximumFractionDigits = 2
-            format1.currency = Currency.getInstance(currencyToUse)
+            format1.currency = Currency.getInstance(currency)
             return format1
         }
     }
@@ -82,16 +77,6 @@ class UserSettingViewModel @Inject constructor(
 
     private fun updateConverters(currentSettings: UserSetting) {
         _converterDefault.value = makeConverter(currentSettings.currency)
-    }
-
-    fun createDefaultSetting() {
-        if (_settings.value == null) {
-            viewModelScope.launch {
-                userSettingDao.createSettings(
-                    UserSetting.getDefault(userId)
-                )
-            }
-        }
     }
 
     fun setActiveUser(user: User) = runBlocking {
