@@ -173,7 +173,7 @@ fun InputWidget(
             ) {
                 AmountButton(isValid, 10.0, changeAmount, formatterCompact)
                 AmountButton(isValid, 1.0, changeAmount, formatterCompact)
-                AmountButton(isValid, 0.5, changeAmount, formatterCompact)
+                AmountButton(isValid, 0.1, changeAmount, formatterCompact)
 
             }
         }
