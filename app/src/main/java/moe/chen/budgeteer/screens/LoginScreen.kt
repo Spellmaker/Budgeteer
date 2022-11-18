@@ -22,10 +22,10 @@ import moe.chen.budgeteer.R
 import moe.chen.budgeteer.navigation.BudgeteerScreens
 import moe.chen.budgeteer.room.User
 import moe.chen.budgeteer.viewmodel.UserViewModel
+import moe.chen.budgeteer.widgets.HelpWidget
 
 @Composable
 fun LoginScreen(
-    modifier: Modifier = Modifier,
     navController: NavController = rememberNavController(),
 ) {
     val userViewModel = hiltViewModel<UserViewModel>()
@@ -59,6 +59,7 @@ fun LoginScreen(
         val successString = stringResource(R.string.notify_user_created)
         val errorString = stringResource(R.string.notify_user_creation_error)
         LoginWidget(
+            navController = navController,
             modifier = Modifier,
             username = username,
             password = password,
@@ -96,6 +97,7 @@ fun LoginScreen(
 @Preview(showBackground = true)
 fun LoginWidget(
     modifier: Modifier = Modifier,
+    navController: NavController = rememberNavController(),
     username: String = "",
     password: String = "",
     updateUsername: (String) -> Unit = {},
@@ -104,7 +106,9 @@ fun LoginWidget(
     createUser: () -> Unit = {},
 ) {
     Surface(
-        modifier = modifier.fillMaxWidth().fillMaxHeight(),
+        modifier = modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
         color = MaterialTheme.colors.background,
     ) {
         Card(modifier = Modifier.padding(20.dp)) {
@@ -156,6 +160,10 @@ fun LoginWidget(
                     ) {
                         Text(stringResource(R.string.operation_create))
                     }
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+                Row(horizontalArrangement = Arrangement.End) {
+                    HelpWidget(navController = navController)
                 }
             }
         }

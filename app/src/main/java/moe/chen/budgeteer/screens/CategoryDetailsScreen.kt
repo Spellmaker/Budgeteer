@@ -47,7 +47,7 @@ fun CategoryDetailsScreen(
         val entries =
             model.categoryEntryFlow(category.value!!).collectAsState(initial = emptyList())
 
-        MainViewWidget(logout = logout) {
+        MainViewWidget(navController = navController, logout = logout) {
             Column(
                 modifier = Modifier
                     .fillMaxHeight()

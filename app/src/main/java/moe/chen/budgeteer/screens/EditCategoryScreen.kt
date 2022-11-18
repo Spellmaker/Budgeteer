@@ -45,7 +45,7 @@ fun EditCategoryScreen(
     val budget = remember { mutableStateOf<Double?>(existingCategory.value?.budget ?: 0.0) }
     var budgetString by remember { mutableStateOf(formatCompact(budget.value!!)) }
 
-    MainViewWidget(logout = logout) {
+    MainViewWidget(navController = navController, logout = logout) {
         if (convertDefault.value != null) {
             Column(
                 modifier = Modifier

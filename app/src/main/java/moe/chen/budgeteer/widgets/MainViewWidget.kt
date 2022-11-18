@@ -8,10 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import moe.chen.budgeteer.R
 
 @Composable
 fun MainViewWidget(
+    navController: NavController,
     title: String = "",
     logout: () -> Unit,
     content: @Composable (PaddingValues) -> Unit,
@@ -35,8 +37,11 @@ fun MainViewWidget(
                         style = MaterialTheme.typography.h6
                     )
 
-                    Button(onClick = logout) {
-                        Icon(Icons.Rounded.Logout, stringResource(R.string.operation_logout))
+                    Row {
+                        HelpWidget(navController = navController)
+                        Button(onClick = logout, modifier = Modifier.padding(2.dp)) {
+                            Icon(Icons.Rounded.Logout, stringResource(R.string.operation_logout))
+                        }
                     }
                 }
             }

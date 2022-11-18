@@ -43,7 +43,7 @@ fun InputEntryScreen(
     }
     var isValid by remember { mutableStateOf(true) }
 
-    MainViewWidget(logout = logout) {
+    MainViewWidget(navController = navController, logout = logout) {
         if (category.value != null) {
             InputWidget(
                 category = category.value,

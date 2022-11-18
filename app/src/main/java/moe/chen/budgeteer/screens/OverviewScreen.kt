@@ -49,6 +49,7 @@ fun OverviewScreen(
         val converter = settingsModel.converterDefault.collectAsState()
 
         OverviewWidget(
+            navController = navController,
             logout = logout,
             categories = categories.value,
             onAddCategory = {
@@ -85,6 +86,7 @@ fun OverviewScreen(
 
 @Composable
 fun OverviewWidget(
+    navController: NavController,
     categories: List<Category> = exampleCategories(),
     getCategoryFlow: (Category) -> Flow<List<BudgetEntry>>,
     onAddCategory: () -> Unit = {},
@@ -95,7 +97,7 @@ fun OverviewWidget(
     fields: List<ComputedField>,
     formatter: @Composable (Double) -> String,
 ) {
-    MainViewWidget(logout = logout) {
+    MainViewWidget(navController = navController, logout = logout) {
         Column(
             modifier = Modifier.padding(it)
         ) {
