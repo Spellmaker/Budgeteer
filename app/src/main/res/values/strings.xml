@@ -44,7 +44,8 @@
     <string name="help_login_screen">Welcome to Budgeteer!\n\nBudgeteer is a simple budgeting app, allowing you to categorize spendings quickly to keep an overview over your monthly goals. \n\nEnter a username and password of your choice and either create a new user or login as an existing one.</string>
     <string name="help_overview_screen">This is the main view, displaying your current spending categories and goals. \n\nYou can customize this view using the settings button down left or add new categories with the + button down right.\n\nTap a category to add an expense, long tap to view the category details and edit it.</string>
     <string name="help_input_screen">Input an expense for the current category either using the quick +/- buttons or by directly inputting a value</string>
-    <string name="help_add_category">Edit an existing category or add a new one. A category is identified by its name and a monthly budget can be provided.</string>
+    <string name="help_add_category">Edit an existing category or add a new one. A category is identified by its name and a monthly budget can be provided.\n\nThe trash can icon can be used to finally delete a categories and all entries for it.</string>
     <string name="help_settings_screen">Customize your app here, re-ordering/selecting the computed fields shown per category or setting the app currency.</string>
     <string name="help_category_overview">View the entries per category. A tap on an entry deletes it. The pen button can be used to edit the category settings.</string>
+    <string name="no_categories">Welcome to Budgeteer!\n\nThere is nothing to see here yet, so add a category of spendings using the plus button on the bottom right.\n\nOr feel free to adjust the settings first.</string>
 </resources>

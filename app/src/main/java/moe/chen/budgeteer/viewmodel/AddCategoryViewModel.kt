@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import moe.chen.budgeteer.room.BudgetEntryDao
 import moe.chen.budgeteer.room.Category
 import moe.chen.budgeteer.room.CategoryDao
 import javax.inject.Inject
@@ -18,7 +19,8 @@ class AddCategoryViewModel @Inject constructor(
     private val categoryRepository: CategoryDao,
     savedStateHandle: SavedStateHandle,
     private val categoryDao: CategoryDao,
-): ViewModel() {
+    private val entryDao: BudgetEntryDao,
+) : ViewModel() {
 
     val invalidCategory = Category(42, "invalid", 0.0, 42)
 
@@ -58,12 +60,25 @@ class AddCategoryViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             Log.d("AddCategoryViewModel", "update with new budget $budget")
-            categoryRepository.updateCategory(Category(
-                cid = id,
-                label = name,
-                budget = budget,
-                uid = user,
-            ))
+            categoryRepository.updateCategory(
+                Category(
+                    cid = id,
+                    label = name,
+                    budget = budget,
+                    uid = user,
+                )
+            )
+        }
+    }
+
+    fun removeCategory() {
+        categoryId?.let { id ->
+            category.value?.let { c ->
+                viewModelScope.launch {
+                    entryDao.deleteAll(id)
+                    categoryDao.deleteCategory(c)
+                }
+            }
         }
     }
 }

@@ -29,6 +29,9 @@ interface BudgetEntryDao {
     @Delete
     suspend fun deleteEntry(entry: BudgetEntry)
 
+    @Query("DELETE FROM budgetentry WHERE cid = :cid")
+    suspend fun deleteAll(cid: Int)
+
     @Query("SELECT * FROM budgetentry " +
             "WHERE cid = :cid ")
     fun listEntries(cid: Int): Flow<List<BudgetEntry>>

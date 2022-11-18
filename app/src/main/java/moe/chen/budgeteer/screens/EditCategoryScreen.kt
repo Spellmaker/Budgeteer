@@ -6,6 +6,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Save
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -121,6 +122,24 @@ fun EditCategoryScreen(
                                 Icons.Rounded.ArrowBack,
                                 contentDescription = stringResource(R.string.operation_cancel)
                             )
+                        }
+
+
+                        if (existingCategory.value != null) {
+                            FloatingActionButton(onClick = {
+                                if (existingCategory.value != null) {
+                                    viewModel.removeCategory()
+                                    navController.navigate(
+                                        BudgeteerScreens.OverviewScreen.name +
+                                                "/${user.uid!!}"
+                                    )
+                                }
+                            }) {
+                                Icon(
+                                    Icons.Rounded.Delete,
+                                    contentDescription = stringResource(R.string.operation_delete)
+                                )
+                            }
                         }
                         FloatingActionButton(onClick = {
                             if (budget.value != null) {

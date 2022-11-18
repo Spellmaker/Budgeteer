@@ -14,6 +14,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
@@ -98,45 +99,78 @@ fun OverviewWidget(
     formatter: @Composable (Double) -> String,
 ) {
     MainViewWidget(navController = navController, logout = logout) {
-        Column(
-            modifier = Modifier.padding(it)
-        ) {
-            CategoryListWidget(
-                categories,
-                getCategoryFlow,
-                clickCategory,
-                longPress,
-                fields,
-                formatter,
-            )
+        if (categories.isEmpty()) {
             Column(
                 modifier = Modifier
-                    .fillMaxHeight()
                     .fillMaxWidth()
-                    .padding(10.dp),
-                verticalArrangement = Arrangement.Bottom
+                    .fillMaxHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    FloatingActionButton(onClick = accessSettings) {
-                        Icon(
-                            Icons.Rounded.Settings,
-                            contentDescription = stringResource(R.string.operation_settings)
-                        )
-                    }
-                    FloatingActionButton(onClick = onAddCategory) {
-                        Icon(
-                            Icons.Rounded.Add,
-                            contentDescription = stringResource(R.string.operation_add_category)
-                        )
+                Text(
+                    modifier = Modifier.padding(5.dp),
+                    text = stringResource(id = R.string.no_categories)
+                )
 
-                    }
-                }
+                FabColumn(
+                    accessSettings = accessSettings,
+                    onAddCategory = onAddCategory,
+                )
+            }
+        } else {
+            Column(
+                modifier = Modifier.padding(it)
+            ) {
+
+                CategoryListWidget(
+                    categories,
+                    getCategoryFlow,
+                    clickCategory,
+                    longPress,
+                    fields,
+                    formatter,
+                )
+                FabColumn(
+                    accessSettings = accessSettings,
+                    onAddCategory = onAddCategory,
+                )
             }
         }
     }
+}
+
+@Composable
+fun FabColumn(
+    accessSettings: () -> Unit,
+    onAddCategory: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth()
+            .padding(10.dp),
+        verticalArrangement = Arrangement.Bottom
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            FloatingActionButton(onClick = accessSettings) {
+                Icon(
+                    Icons.Rounded.Settings,
+                    contentDescription = stringResource(R.string.operation_settings)
+                )
+            }
+            FloatingActionButton(onClick = onAddCategory) {
+                Icon(
+                    Icons.Rounded.Add,
+                    contentDescription = stringResource(R.string.operation_add_category)
+                )
+
+            }
+        }
+    }
+
 }
 
 @Composable
