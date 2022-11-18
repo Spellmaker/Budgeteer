@@ -43,7 +43,11 @@ fun LoginScreen(
             navController.navigate(
                 BudgeteerScreens.OverviewScreen.name +
                         "/${previousUser!!.uid}"
-            )
+            ) {
+                popUpTo(BudgeteerScreens.LoginScreen.name) {
+                    inclusive = true
+                }
+            }
         } else {
             Log.d(
                 "login",
