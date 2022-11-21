@@ -1,7 +1,6 @@
 package moe.chen.budgeteer.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,12 +18,11 @@ import javax.inject.Inject
 class OverviewViewModel @Inject constructor(
     private val categoryDao: CategoryDao,
     private val entryDao: BudgetEntryDao,
-    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _categories = MutableStateFlow<List<Category>>(emptyList())
 
-    private val userId: Int = savedStateHandle.get<Int>("user")!!
+    private val userId: Int = 0
 
     val categories = _categories.asStateFlow()
 

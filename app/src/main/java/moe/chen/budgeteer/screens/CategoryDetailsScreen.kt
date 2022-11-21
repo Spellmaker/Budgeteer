@@ -22,7 +22,6 @@ import androidx.navigation.NavController
 import moe.chen.budgeteer.R
 import moe.chen.budgeteer.navigation.BudgeteerScreens
 import moe.chen.budgeteer.room.BudgetEntry
-import moe.chen.budgeteer.room.User
 import moe.chen.budgeteer.viewmodel.CategoryDetailViewModel
 import moe.chen.budgeteer.viewmodel.UserSettingViewModel
 import moe.chen.budgeteer.widgets.MainViewWidget
@@ -32,8 +31,6 @@ import java.time.format.DateTimeFormatter
 fun CategoryDetailsScreen(
     navController: NavController,
     categoryId: Int,
-    user: User,
-    logout: () -> Unit,
 ) {
     val model = hiltViewModel<CategoryDetailViewModel>()
     model.listenForCategory(categoryId)
@@ -47,7 +44,7 @@ fun CategoryDetailsScreen(
         val entries =
             model.categoryEntryFlow(category.value!!).collectAsState(initial = emptyList())
 
-        MainViewWidget(navController = navController, logout = logout) {
+        MainViewWidget(navController = navController) {
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -94,7 +91,7 @@ fun CategoryDetailsScreen(
                         FloatingActionButton(onClick = {
                             navController.navigate(
                                 BudgeteerScreens.AddCategoryScreen.name +
-                                        "/${user.uid!!}/${category.value?.cid}"
+                                        "/0/${category.value?.cid}"
                             )
                         }) {
                             Icon(

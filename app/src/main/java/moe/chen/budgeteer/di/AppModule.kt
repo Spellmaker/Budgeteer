@@ -11,6 +11,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import moe.chen.budgeteer.room.*
+import moe.chen.budgeteer.room.migration.MIGRATION_3_4
 import javax.inject.Singleton
 
 private val Context.userDataStore: DataStore<Preferences>
@@ -44,6 +45,8 @@ object AppModule {
     @Provides
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase =
         Room.databaseBuilder(context, AppDatabase::class.java, "budgeteer_db")
+            .addMigrations(MIGRATION_3_4)
+            .addCallback(SetupCallback)
             .build()
 
     @Singleton

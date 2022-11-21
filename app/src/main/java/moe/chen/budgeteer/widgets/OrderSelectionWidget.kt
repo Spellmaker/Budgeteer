@@ -22,7 +22,7 @@ fun Preview() {
         elements = listOf("A", "B", "C", "D"),
         orderChanged = {},
         visibilities = listOf(true, true, true, false),
-        visibilityChanged = { index, newValue -> }
+        visibilityChanged = { _, _ -> }
     ) { text, modifier ->
         Text(text, modifier = modifier)
     }

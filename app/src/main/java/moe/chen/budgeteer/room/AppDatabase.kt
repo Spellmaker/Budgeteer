@@ -13,7 +13,7 @@ import moe.chen.budgeteer.data.DateTimeHandler
         BudgetEntry::class,
         UserSetting::class,
     ],
-    version = 3,
+    version = 4,
     autoMigrations = [
         AutoMigration(from = 2, to = 3),
     ],

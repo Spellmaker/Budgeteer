@@ -1,7 +1,6 @@
 package moe.chen.budgeteer.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,9 +8,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import moe.chen.budgeteer.data.PreferenceRepository
-import moe.chen.budgeteer.room.User
 import moe.chen.budgeteer.room.UserSetting
 import moe.chen.budgeteer.room.UserSettingDao
 import java.text.NumberFormat
@@ -21,11 +17,9 @@ import javax.inject.Inject
 @HiltViewModel
 class UserSettingViewModel @Inject constructor(
     private val userSettingDao: UserSettingDao,
-    private val preferenceRepository: PreferenceRepository,
-    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val userId: Int = savedStateHandle.get<Int>("user")!!
+    private val userId: Int = 0
 
     val invalidSettings = UserSetting(
         id = -1,
@@ -79,9 +73,10 @@ class UserSettingViewModel @Inject constructor(
         _converterDefault.value = makeConverter(currentSettings.currency)
     }
 
-    fun setActiveUser(user: User) = runBlocking {
-        preferenceRepository.setUser(user)
-        Log.d("UserViewModel", "updated user to $user")
+    fun createDefault() {
+        viewModelScope.launch {
+            userSettingDao.createSettings(UserSetting.getDefault(0))
+        }
     }
 
     fun updateSettings(settings: UserSetting) {

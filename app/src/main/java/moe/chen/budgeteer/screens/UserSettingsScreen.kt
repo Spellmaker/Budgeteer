@@ -5,7 +5,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.*
+import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Save
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -16,9 +17,7 @@ import androidx.navigation.NavController
 import moe.chen.budgeteer.R
 import moe.chen.budgeteer.data.ComputedField
 import moe.chen.budgeteer.data.allCategories
-import moe.chen.budgeteer.navigation.BudgeteerScreens
 import moe.chen.budgeteer.room.Category
-import moe.chen.budgeteer.room.User
 import moe.chen.budgeteer.room.UserSetting
 import moe.chen.budgeteer.viewmodel.UserSettingViewModel
 import moe.chen.budgeteer.widgets.FilteredSelectionWidget
@@ -33,10 +32,7 @@ fun UserSettingsScreen(
     val model = hiltViewModel<UserSettingViewModel>()
     val settings = model.settings.collectAsState()
     if (settings.value != null && settings.value != model.invalidSettings) {
-        MainViewWidget(navController = navController, logout = {
-            model.setActiveUser(User(null, "logout", "logout"))
-            navController.navigate(BudgeteerScreens.LoginScreen.name)
-        }) {
+        MainViewWidget(navController = navController) {
             UserSettingEditor(
                 settings.value!!,
                 goBack = { navController.popBackStack() }
@@ -51,13 +47,7 @@ fun UserSettingsScreen(
 @Preview(showBackground = true)
 @Composable
 fun UserSettingEditor(
-    currentSettings: UserSetting = UserSetting.getDefault(
-        User(
-            uid = 1,
-            username = "",
-            secret = ""
-        )
-    ),
+    currentSettings: UserSetting = UserSetting.getDefault(0),
     goBack: () -> Unit = {},
     updateSettings: (UserSetting) -> Unit = {},
 ) {

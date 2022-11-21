@@ -7,7 +7,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import moe.chen.budgeteer.screens.*
-import moe.chen.budgeteer.widgets.VerifyUserData
 
 @Composable
 fun BudgeteerNavigation() {
@@ -15,24 +14,12 @@ fun BudgeteerNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = BudgeteerScreens.LoginScreen.name,
+        startDestination = BudgeteerScreens.OverviewScreen.name,
     ) {
-        composable(route = BudgeteerScreens.LoginScreen.name) {
-            LoginScreen(
-                navController = navController,
-            )
-        }
         composable(
-            route = "${BudgeteerScreens.OverviewScreen.name}/{user}",
-            arguments = listOf(
-                navArgument("user") { type = NavType.IntType },
-            )
+            route = BudgeteerScreens.OverviewScreen.name,
         ) {
-            VerifyUserData(
-                navController = navController,
-            ) { user, logout ->
-                OverviewScreen(navController = navController, user = user, logout = logout)
-            }
+            OverviewScreen(navController = navController)
         }
         composable(
             route = "${BudgeteerScreens.AddCategoryScreen.name}/{user}/{category}",
@@ -41,11 +28,7 @@ fun BudgeteerNavigation() {
                 navArgument("user") { type = NavType.IntType },
             )
         ) {
-            VerifyUserData(
-                navController = navController,
-            ) { user, logout ->
-                EditCategoryScreen(navController = navController, user = user, logout = logout)
-            }
+            EditCategoryScreen(navController = navController)
         }
         composable(
             route = "${BudgeteerScreens.CategoryScreen.name}/{user}/{category}",
@@ -55,29 +38,18 @@ fun BudgeteerNavigation() {
             )
         ) {
             val category = it.arguments?.getInt("category")
-            VerifyUserData(
+            CategoryDetailsScreen(
                 navController = navController,
-            ) { user, logout ->
-                CategoryDetailsScreen(
-                    navController = navController,
-                    categoryId = category!!,
-                    logout = logout,
-                    user = user,
-                )
-            }
+                categoryId = category!!,
+            )
         }
         composable(
             route = "${BudgeteerScreens.ExpenseInputScreen.name}/{category}",
             arguments = listOf(navArgument("category") { type = NavType.IntType })
         ) {
-            VerifyUserData(
+            InputEntryScreen(
                 navController = navController,
-            ) { user, logout ->
-                InputEntryScreen(
-                    navController = navController,
-                    logout = logout,
-                )
-            }
+            )
         }
         composable(
             route = "${BudgeteerScreens.UserSettingsScreen.name}/{user}",

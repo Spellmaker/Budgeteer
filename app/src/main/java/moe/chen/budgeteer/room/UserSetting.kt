@@ -27,8 +27,6 @@ data class UserSetting(
     @ColumnInfo(name = "cat_show_unspend") val catShowUnspend: Int,
 ) {
     companion object {
-        fun getDefault(user: User) = getDefault(user.uid!!)
-
         fun getDefault(userId: Int) = UserSetting(
             id = null,
             uid = userId,

@@ -20,7 +20,6 @@ import androidx.navigation.NavController
 import moe.chen.budgeteer.R
 import moe.chen.budgeteer.formatCompact
 import moe.chen.budgeteer.navigation.BudgeteerScreens
-import moe.chen.budgeteer.room.User
 import moe.chen.budgeteer.viewmodel.AddCategoryViewModel
 import moe.chen.budgeteer.viewmodel.UserSettingViewModel
 import moe.chen.budgeteer.widgets.MainViewWidget
@@ -28,8 +27,6 @@ import moe.chen.budgeteer.widgets.MainViewWidget
 @Composable
 fun EditCategoryScreen(
     navController: NavController,
-    user: User,
-    logout: () -> Unit,
 ) {
     val viewModel = hiltViewModel<AddCategoryViewModel>()
 
@@ -46,7 +43,7 @@ fun EditCategoryScreen(
     val budget = remember { mutableStateOf<Double?>(existingCategory.value?.budget ?: 0.0) }
     var budgetString by remember { mutableStateOf(formatCompact(budget.value!!)) }
 
-    MainViewWidget(navController = navController, logout = logout) {
+    MainViewWidget(navController = navController) {
         if (convertDefault.value != null) {
             Column(
                 modifier = Modifier
@@ -88,7 +85,7 @@ fun EditCategoryScreen(
                     create = {
                         if (budget.value != null) {
                             if (existingCategory.value == null) {
-                                viewModel.addCategory(label.value, budget.value!!, user.uid!!)
+                                viewModel.addCategory(label.value, budget.value!!, 0)
                             } else {
                                 viewModel.updateCategory(
                                     existingCategory.value!!.cid!!,
@@ -99,7 +96,7 @@ fun EditCategoryScreen(
                             }
                             navController.navigate(
                                 BudgeteerScreens.OverviewScreen.name +
-                                        "/${user.uid!!}"
+                                        "/0"
                             )
                         }
                     }
@@ -131,7 +128,7 @@ fun EditCategoryScreen(
                                     viewModel.removeCategory()
                                     navController.navigate(
                                         BudgeteerScreens.OverviewScreen.name +
-                                                "/${user.uid!!}"
+                                                "/0"
                                     )
                                 }
                             }) {
@@ -144,7 +141,7 @@ fun EditCategoryScreen(
                         FloatingActionButton(onClick = {
                             if (budget.value != null) {
                                 if (existingCategory.value == null) {
-                                    viewModel.addCategory(label.value, budget.value!!, user.uid!!)
+                                    viewModel.addCategory(label.value, budget.value!!, 0)
                                 } else {
                                     viewModel.updateCategory(
                                         existingCategory.value!!.cid!!,
@@ -155,7 +152,7 @@ fun EditCategoryScreen(
                                 }
                                 navController.navigate(
                                     BudgeteerScreens.OverviewScreen.name +
-                                            "/${user.uid!!}"
+                                            "/0"
                                 )
                             }
                         }) {

@@ -35,7 +35,6 @@ fun HelpWidget(
         }
 
         val helpResourceId = when (BudgeteerScreens.fromRoute(routeSubstring)) {
-            BudgeteerScreens.LoginScreen -> R.string.help_login_screen
             BudgeteerScreens.OverviewScreen -> R.string.help_overview_screen
             BudgeteerScreens.CategoryScreen -> R.string.help_category_overview
             BudgeteerScreens.ExpenseInputScreen -> R.string.help_input_screen

@@ -1,7 +1,6 @@
 package moe.chen.budgeteer.navigation
 
 enum class BudgeteerScreens {
-    LoginScreen,
     OverviewScreen,
     CategoryScreen,
     ExpenseInputScreen,

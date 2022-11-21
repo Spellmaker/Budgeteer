@@ -30,7 +30,6 @@ import moe.chen.budgeteer.preview.exampleCategories
 import moe.chen.budgeteer.preview.exampleEntries
 import moe.chen.budgeteer.room.BudgetEntry
 import moe.chen.budgeteer.room.Category
-import moe.chen.budgeteer.room.User
 import moe.chen.budgeteer.viewmodel.OverviewViewModel
 import moe.chen.budgeteer.viewmodel.UserSettingViewModel
 import moe.chen.budgeteer.widgets.MainViewWidget
@@ -38,25 +37,24 @@ import moe.chen.budgeteer.widgets.MainViewWidget
 @Composable
 fun OverviewScreen(
     navController: NavController,
-    user: User,
-    logout: () -> Unit,
 ) {
     val model = hiltViewModel<OverviewViewModel>()
     val settingsModel = hiltViewModel<UserSettingViewModel>()
 
     val settings = settingsModel.settings.collectAsState()
-    if (settings.value != null && settings.value != settingsModel.invalidSettings) {
+    if (settings.value == null) {
+        settingsModel.createDefault()
+    } else if (settings.value != settingsModel.invalidSettings) {
         val categories = model.categories.collectAsState()
         val converter = settingsModel.converterDefault.collectAsState()
 
         OverviewWidget(
             navController = navController,
-            logout = logout,
             categories = categories.value,
             onAddCategory = {
                 navController.navigate(
                     BudgeteerScreens.AddCategoryScreen.name +
-                            "/${user.uid!!}/-1"
+                            "/0/-1"
                 )
             },
             getCategoryFlow = { model.categoryEntryFlow(it) },
@@ -68,13 +66,13 @@ fun OverviewScreen(
                 navController
                     .navigate(
                         BudgeteerScreens.CategoryScreen.name +
-                                "/${user.uid!!}/${it.cid!!}"
+                                "/0/${it.cid!!}"
                     )
             },
             formatter = { (converter.value?.format(it) ?: it.toString()) },
             accessSettings = {
                 navController.navigate(
-                    "${BudgeteerScreens.UserSettingsScreen.name}/${user.uid!!}"
+                    "${BudgeteerScreens.UserSettingsScreen.name}/0"
                 )
             },
             fields = allCategories.map { it to it.extractor(settings.value!!) }
@@ -93,12 +91,11 @@ fun OverviewWidget(
     onAddCategory: () -> Unit = {},
     clickCategory: (Category) -> Unit = {},
     longPress: (Category) -> Unit = {},
-    logout: () -> Unit,
     accessSettings: () -> Unit,
     fields: List<ComputedField>,
     formatter: @Composable (Double) -> String,
 ) {
-    MainViewWidget(navController = navController, logout = logout) {
+    MainViewWidget(navController = navController) {
         if (categories.isEmpty()) {
             Column(
                 modifier = Modifier
