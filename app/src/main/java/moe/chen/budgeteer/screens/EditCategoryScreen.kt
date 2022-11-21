@@ -95,8 +95,7 @@ fun EditCategoryScreen(
                                 )
                             }
                             navController.navigate(
-                                BudgeteerScreens.OverviewScreen.name +
-                                        "/0"
+                                BudgeteerScreens.OverviewScreen.name
                             )
                         }
                     }
@@ -127,8 +126,7 @@ fun EditCategoryScreen(
                                 if (existingCategory.value != null) {
                                     viewModel.removeCategory()
                                     navController.navigate(
-                                        BudgeteerScreens.OverviewScreen.name +
-                                                "/0"
+                                        BudgeteerScreens.OverviewScreen.name
                                     )
                                 }
                             }) {
@@ -151,8 +149,7 @@ fun EditCategoryScreen(
                                     )
                                 }
                                 navController.navigate(
-                                    BudgeteerScreens.OverviewScreen.name +
-                                            "/0"
+                                    BudgeteerScreens.OverviewScreen.name
                                 )
                             }
                         }) {
