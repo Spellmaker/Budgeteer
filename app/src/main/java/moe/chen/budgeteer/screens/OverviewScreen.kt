@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -96,7 +97,17 @@ fun OverviewWidget(
     fields: List<ComputedField>,
     formatter: @Composable (Double) -> String,
 ) {
-    MainViewWidget(navController = navController) {
+    MainViewWidget(
+        navController = navController,
+        additionalHelpContent = {
+            Text(stringResource(R.string.field_help_intro))
+            fields.forEach { field ->
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(stringResource(field.label), fontWeight = FontWeight.Bold)
+                Text(stringResource(field.description))
+            }
+        }
+    ) {
         if (categories.isEmpty()) {
             Column(
                 modifier = Modifier

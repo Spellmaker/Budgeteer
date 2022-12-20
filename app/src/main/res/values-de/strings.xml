@@ -49,4 +49,5 @@
     <string name="help_settings_screen">Stelle hier die genauen Felder an, die pro Kategorie angezeigt werden sollen.  Das aktuelle Währungssymbol kann hier ebenfalls eingestellt werden.</string>
     <string name="help_category_overview">Hier wird eine Übersicht der Einträge in der Kategorie angezeigt. Tippe einen Eintrag an, um ihn zu entfernen. Über das Stift-Symbol kann die Kategorie selber editiert werden.</string>
     <string name="no_categories">Willkommen in Budgeteer!\n\nHier gibt es noch nichts zu sehen, also füge schnell über den Plus Button unten rechts deine erste Ausgabenkategorie hinzu.\n\nOder passe zuerst die Einstellungen über das Zahnrad an.</string>
+    <string name="field_help_intro">\nDie folgenden Felder sind aktuell aktiviert:</string>
 </resources>

@@ -16,6 +16,7 @@ import moe.chen.budgeteer.R
 fun MainViewWidget(
     navController: NavController,
     title: String = "",
+    additionalHelpContent: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val addendum = if (title.isEmpty()) {
@@ -38,7 +39,10 @@ fun MainViewWidget(
                     )
 
                     Row {
-                        HelpWidget(navController = navController)
+                        HelpWidget(
+                            navController = navController,
+                            additionalHelpContent = additionalHelpContent
+                        )
                     }
                 }
             }

@@ -1,5 +1,6 @@
 package moe.chen.budgeteer.widgets
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
@@ -17,7 +18,8 @@ import moe.chen.budgeteer.navigation.BudgeteerScreens
 
 @Composable
 fun HelpWidget(
-    navController: NavController
+    navController: NavController,
+    additionalHelpContent: @Composable () -> Unit,
 ) {
     var isOpen by remember { mutableStateOf(false) }
 
@@ -45,7 +47,10 @@ fun HelpWidget(
             onDismissRequest = { isOpen = false },
             title = { Text(stringResource(R.string.operation_help)) },
             text = {
-                Text(stringResource(helpResourceId))
+                Column {
+                    Text(stringResource(helpResourceId))
+                    additionalHelpContent()
+                }
             },
             confirmButton = {
                 Button(onClick = { isOpen = false }) {

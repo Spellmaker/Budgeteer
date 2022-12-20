@@ -48,4 +48,5 @@
     <string name="help_settings_screen">Customize your app here, re-ordering/selecting the computed fields shown per category or setting the app currency symbol.</string>
     <string name="help_category_overview">View the entries per category. A tap on an entry deletes it. The pen button can be used to edit the category settings.</string>
     <string name="no_categories">Welcome to Budgeteer!\n\nThere is nothing to see here yet, so add a category of spendings using the plus button on the bottom right.\n\nOr feel free to adjust the settings first.</string>
+    <string name="field_help_intro">\nThe following fields are currently visible:</string>
 </resources>
