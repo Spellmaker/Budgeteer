@@ -18,13 +18,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.flow.Flow
 import moe.chen.budgeteer.R
-import moe.chen.budgeteer.data.ComputedField
-import moe.chen.budgeteer.data.allCategories
+import moe.chen.budgeteer.data.*
 import moe.chen.budgeteer.navigation.BudgeteerScreens
 import moe.chen.budgeteer.preview.exampleCategories
 import moe.chen.budgeteer.preview.exampleEntries
@@ -33,6 +33,7 @@ import moe.chen.budgeteer.room.Category
 import moe.chen.budgeteer.viewmodel.OverviewViewModel
 import moe.chen.budgeteer.viewmodel.UserSettingViewModel
 import moe.chen.budgeteer.widgets.MainViewWidget
+import java.time.ZonedDateTime
 
 @Composable
 fun OverviewScreen(
@@ -116,20 +117,28 @@ fun OverviewWidget(
             }
         } else {
             Column(
-                modifier = Modifier.padding(it)
+                modifier = Modifier
+                    .padding(it)
+                    .fillMaxHeight()
             ) {
-
-                CategoryListWidget(
-                    categories,
-                    getCategoryFlow,
-                    clickCategory,
-                    longPress,
-                    fields,
-                    formatter,
-                )
-                FabColumn(
-                    accessSettings = accessSettings,
-                    onAddCategory = onAddCategory,
+                Scaffold(
+                    content = { padding ->
+                        CategoryListWidget(
+                            padding,
+                            categories,
+                            getCategoryFlow,
+                            clickCategory,
+                            longPress,
+                            fields,
+                            formatter,
+                        )
+                    },
+                    bottomBar = {
+                        FabColumn(
+                            accessSettings = accessSettings,
+                            onAddCategory = onAddCategory,
+                        )
+                    }
                 )
             }
         }
@@ -170,8 +179,16 @@ fun FabColumn(
 
 }
 
+private val dummyCategory = Category(
+    cid = null,
+    label = "",
+    budget = 0.0,
+    uid = -1,
+)
+
 @Composable
 fun CategoryListWidget(
+    paddingValues: PaddingValues,
     categories: List<Category> = exampleCategories(),
     getCategoryFlow: (Category) -> Flow<List<BudgetEntry>>,
     clickCategory: (Category) -> Unit = {},
@@ -179,23 +196,54 @@ fun CategoryListWidget(
     fields: List<ComputedField>,
     formatter: @Composable (Double) -> String,
 ) {
+    LazyColumn(modifier = Modifier) {
+        items(items = categories.plus(dummyCategory)) {
+            if (it == dummyCategory) {
+                Column(modifier = Modifier.height(100.dp)) {
 
-    LazyColumn {
-        items(items = categories) {
-            val entries = getCategoryFlow(it).collectAsState(initial = emptyList()).value
+                }
+            } else {
+                val entries = getCategoryFlow(it).collectAsState(initial = emptyList()).value
 
-            Log.d("OverviewScreen", "cat $it entries in screen: $entries")
+                Log.d("OverviewScreen", "cat $it entries in screen: $entries")
 
-            CategoryRow(
-                category = it,
-                entries = entries,
-                clicked = { clickCategory(it) },
-                longPress = { longPress(it) },
-                formatter = formatter,
-                fields = fields
-            )
+                CategoryRow(
+                    category = it,
+                    entries = entries,
+                    clicked = { clickCategory(it) },
+                    longPress = { longPress(it) },
+                    formatter = formatter,
+                    fields = fields
+                )
+            }
         }
     }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun RowPreview() {
+    val converter = UserSettingViewModel.makeConverter("EUR")
+    CategoryRow(
+        category = Category(
+            cid = 0,
+            label = "Test",
+            budget = 50.0,
+            uid = 0,
+        ),
+        entries = listOf(
+            BudgetEntry(
+                bid = 0,
+                amount = 10.0,
+                cid = 0,
+                date = ZonedDateTime.now(),
+            )
+        ),
+        clicked = {},
+        longPress = {},
+        fields = listOf(BudgetField, TrendField, SpendPerDayField),
+        formatter = { converter.format(it) }
+    )
 }
 
 @Composable
@@ -228,6 +276,7 @@ fun CategoryRow(
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
+                    .fillMaxWidth(0.5f)
                     .padding(20.dp),
                 verticalArrangement = Arrangement.Center,
             ) {
@@ -235,7 +284,7 @@ fun CategoryRow(
             }
             Column(
                 modifier = Modifier
-                    .width(200.dp)
+                    .fillMaxWidth()
                     .fillMaxHeight()
                     .padding(5.dp),
                 verticalArrangement = Arrangement.Center
@@ -265,14 +314,18 @@ fun CategorySummary(
         Triple(value, color, field)
     }
 
-
-    Row(modifier = Modifier.padding(5.dp)) {
-        Column {
+    Row(
+        modifier = Modifier
+            .padding(5.dp)
+            .fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.fillMaxWidth(0.6f)) {
             computed.forEach { Text(stringResource(it.third.label), color = it.second) }
         }
-        Spacer(modifier = Modifier.width(10.dp))
-
-        Column {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.End,
+        ) {
             computed.forEach { Text(formatter(it.first), color = it.second) }
         }
     }

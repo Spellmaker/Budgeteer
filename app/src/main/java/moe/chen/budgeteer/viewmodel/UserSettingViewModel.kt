@@ -61,7 +61,7 @@ class UserSettingViewModel @Inject constructor(
 
     companion object {
         fun makeConverter(currency: String): NumberFormat {
-            val format1 = NumberFormat.getCurrencyInstance()
+            val format1 = NumberFormat.getCurrencyInstance(Locale.GERMAN)
             format1.maximumFractionDigits = 2
             format1.currency = Currency.getInstance(currency)
             return format1
