@@ -32,14 +32,20 @@ import moe.chen.budgeteer.widgets.MainViewWidget
 fun InputEntryScreen(
     navController: NavController,
 ) {
-    var amountDouble by remember { mutableStateOf(0.0) }
     val model = hiltViewModel<InputEntryViewModel>()
+    val existingEntry = model.entry.collectAsState()
+    if (existingEntry.value == model.invalidEntry) {
+        return
+    }
+
+    var amountDouble by remember { mutableStateOf(existingEntry.value?.amount ?: 0.0) }
     val category = model.category.collectAsState()
     var amountString by remember {
         mutableStateOf<String>(
-            formatCompact(0.0)
+            formatCompact(existingEntry.value?.amount ?: 0.0)
         )
     }
+
     var isValid by remember { mutableStateOf(true) }
 
     MainViewWidget(navController = navController) {
@@ -71,7 +77,7 @@ fun InputEntryScreen(
                 },
                 createEntry = {
                     if (isValid) {
-                        model.addEntry(amountDouble)
+                        model.addOrModifyEntry(amountDouble)
                         navController.popBackStack()
                     }
                 },

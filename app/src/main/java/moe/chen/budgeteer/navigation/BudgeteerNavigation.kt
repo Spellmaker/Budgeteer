@@ -52,6 +52,17 @@ fun BudgeteerNavigation() {
             )
         }
         composable(
+            route = "${BudgeteerScreens.ExpenseInputScreen.name}/{category}/{entry}",
+            arguments = listOf(
+                navArgument("category") { type = NavType.IntType },
+                navArgument("entry") { type = NavType.IntType },
+            )
+        ) {
+            InputEntryScreen(
+                navController = navController,
+            )
+        }
+        composable(
             route = "${BudgeteerScreens.UserSettingsScreen.name}/{user}",
             arguments = listOf(navArgument("user") { type = NavType.IntType })
         ) {

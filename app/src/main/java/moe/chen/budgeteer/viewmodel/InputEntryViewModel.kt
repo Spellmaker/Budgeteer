@@ -24,9 +24,22 @@ class InputEntryViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+    val invalidEntry = BudgetEntry(
+        bid = 42,
+        amount = -42.0,
+        cid = 42,
+        date = ZonedDateTime.now()
+    )
+
     private val categoryId: Int = savedStateHandle.get<Int>("category")!!
 
+    private val budgetId: Int? = savedStateHandle.get<Int>("entry")
+
     private val _category = MutableStateFlow<Category?>(null)
+
+    private val _entry = MutableStateFlow<BudgetEntry?>(invalidEntry)
+
+    val entry = _entry.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -36,28 +49,51 @@ class InputEntryViewModel @Inject constructor(
                 .distinctUntilChanged()
                 .collect { category -> _category.value = category }
         }
+        if (budgetId != null && budgetId >= 0) {
+            viewModelScope.launch {
+                entryDao.findEntry(budgetId)
+                    .distinctUntilChanged()
+                    .collect { entry -> _entry.value = entry }
+            }
+        } else {
+            _entry.value = null
+        }
     }
 
     val category = _category.asStateFlow()
 
     private var currentId: Int? = null
 
-    fun addEntry(amount: Double) {
+    fun addOrModifyEntry(amount: Double) {
         viewModelScope.launch {
-            Log.d("InputEntryViewModel", "add amount $amount to category $currentId")
+            val existing = entry.value
+
             val id = currentId
             if (id != null) {
-                Log.d("InputEntryViewModel", "actually creating entry")
-                entryDao.createEntry(
-                    BudgetEntry(
-                        bid = null,
-                        amount = amount,
-                        cid = id,
-                        date = ZonedDateTime.now(),
+                if (existing != null) {
+                    Log.d(
+                        "InputEntryViewModel", "modify entry with id ${existing.bid} " +
+                                "amount $amount for category $currentId"
                     )
-                )
-                Log.d("InputEntryViewModel", "" + entryDao.findAllEntries())
-
+                    entryDao.updateEntry(
+                        BudgetEntry(
+                        bid = existing.bid,
+                        amount = amount,
+                        cid = existing.cid,
+                        date = existing.date,
+                    )
+                    )
+                } else {
+                    Log.d("InputEntryViewModel", "add amount $amount to category $currentId")
+                    entryDao.createEntry(
+                        BudgetEntry(
+                            bid = null,
+                            amount = amount,
+                            cid = id,
+                            date = ZonedDateTime.now(),
+                        )
+                    )
+                }
             }
         }
     }

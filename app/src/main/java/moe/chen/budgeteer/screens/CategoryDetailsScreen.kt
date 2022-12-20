@@ -65,9 +65,14 @@ fun CategoryDetailsScreen(
                 LazyColumn {
                     items(items = entries.value.sortedByDescending { it.date }) {
                         ExpenseWidget(
-                            it,
-                            { model.removeEntry(it) },
-                            { n -> convertDefault.value?.format(n) ?: n.toString() })
+                            item = it,
+                            onEdit = { navController.navigate(
+                                BudgeteerScreens.ExpenseInputScreen.name + "/${it.cid}/${
+                                    it.bid
+                                }"
+                            )},
+                            onDelete = { model.removeEntry(it) },
+                            formatter = { n -> convertDefault.value?.format(n) ?: n.toString() })
                     }
                 }
 
@@ -109,7 +114,8 @@ fun CategoryDetailsScreen(
 @Composable
 fun ExpenseWidget(
     item: BudgetEntry,
-    onClick: () -> Unit,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
     formatter: @Composable (Double) -> String,
 ) {
     Card(
@@ -123,7 +129,8 @@ fun ExpenseWidget(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(5.dp),
+                .padding(5.dp)
+                .clickable(onClick = onEdit),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Icon(
@@ -133,7 +140,7 @@ fun ExpenseWidget(
                     .padding(
                         PaddingValues(horizontal = 10.dp)
                     )
-                    .clickable(onClick = onClick),
+                    .clickable(onClick = onDelete),
             )
             Text(
                 DateTimeFormatter.ISO_ZONED_DATE_TIME.format(item.date),

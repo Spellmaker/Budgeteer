@@ -26,6 +26,9 @@ interface BudgetEntryDao {
     @Insert
     suspend fun createEntry(entry: BudgetEntry)
 
+    @Query("SELECT * FROM budgetentry WHERE bid = :bid")
+    fun findEntry(bid: Int): Flow<BudgetEntry>
+
     @Delete
     suspend fun deleteEntry(entry: BudgetEntry)
 
@@ -43,6 +46,9 @@ interface BudgetEntryDao {
 
     @Query("SELECT * FROM budgetentry")
     suspend fun findAllEntries(): List<BudgetEntry>
+
+    @Update
+    suspend fun updateEntry(entry: BudgetEntry)
 
     fun listEntries(cid: Int, month: Int): Flow<List<BudgetEntry>> {
         val actualMonth = if (month < 10) {
