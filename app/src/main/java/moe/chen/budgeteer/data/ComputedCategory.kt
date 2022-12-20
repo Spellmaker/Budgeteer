@@ -91,7 +91,7 @@ val SpendPerDayField = ComputedField(
         val sum = entries.sumOf { it.amount }
         val today = LocalDateTime.now()
         val monthLength = YearMonth.of(today.year, today.month).lengthOfMonth()
-        ((category.budget - sum) / (monthLength - today.dayOfMonth))
+        ((category.budget - sum) / (monthLength - (today.dayOfMonth - 1)))
     },
     colorSelector = { _, value, darkMode ->
         if (value <= 0.0) {

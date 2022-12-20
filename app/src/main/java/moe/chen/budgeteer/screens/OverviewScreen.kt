@@ -241,7 +241,7 @@ fun RowPreview() {
         ),
         clicked = {},
         longPress = {},
-        fields = listOf(BudgetField, TrendField, SpendPerDayField),
+        fields = listOf(BudgetField, CurrentField, TrendField, SpendPerDayField),
         formatter = { converter.format(it) }
     )
 }
