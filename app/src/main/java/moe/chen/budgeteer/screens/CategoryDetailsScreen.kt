@@ -123,16 +123,17 @@ fun ExpenseWidget(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable(onClick = onClick)
                 .padding(5.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Icon(
                 Icons.Rounded.Delete,
                 contentDescription = stringResource(R.string.operation_delete),
-                modifier = Modifier.padding(
-                    PaddingValues(horizontal = 10.dp)
-                )
+                modifier = Modifier
+                    .padding(
+                        PaddingValues(horizontal = 10.dp)
+                    )
+                    .clickable(onClick = onClick),
             )
             Text(
                 DateTimeFormatter.ISO_ZONED_DATE_TIME.format(item.date),
