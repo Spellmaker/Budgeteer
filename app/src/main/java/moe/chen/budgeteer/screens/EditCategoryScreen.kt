@@ -67,7 +67,7 @@ fun EditCategoryScreen(
                 EditWidget(
                     currencyIsError = currencyIsError,
                     label = label.value,
-                    updateLabel = { newLabel -> label.value = newLabel.trim() },
+                    updateLabel = { newLabel -> label.value = newLabel },
                     budget = budgetString,
                     updateBudget = { newBudget ->
                         budgetString = newBudget
