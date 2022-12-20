@@ -51,133 +51,136 @@ fun UserSettingEditor(
     goBack: () -> Unit = {},
     updateSettings: (UserSetting) -> Unit = {},
 ) {
-    var orderVisible by remember { mutableStateOf(false) }
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Spacer(modifier = Modifier.height(10.dp))
-        val elements = Currency.getAvailableCurrencies().toList()
-
-        Log.d("UserSettingsScreen", "currency symbol is: ${currentSettings.currency}")
-        var currentState by remember {
-            mutableStateOf(
-                try {
-                    Currency.getInstance(currentSettings.currency)
-                } catch (e: Exception) {
-                    Log.d("UserSettingsScreen", e.message ?: "error")
-                    Currency.getInstance("EUR")
-                }
-            )
-        }
-        FilteredSelectionWidget<Currency>(
-            label = stringResource(R.string.label_input_currency),
-            items = elements,
-            selectionChanged = { currentState = it },
-            filterSelector = { it.currencyCode },
-            stringSelector = { it.currencyCode + it.displayName + it.currencyCode },
-            currentItem = currentState,
-            initialExpanded = false
-        ) { item, modifier ->
-            Row(modifier = modifier, horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(text = item.currencyCode)
-                Text(text = item.displayName)
-                Text(text = item.symbol)
+    var currentState by remember {
+        mutableStateOf(
+            try {
+                Currency.getInstance(currentSettings.currency)
+            } catch (e: Exception) {
+                Log.d("UserSettingsScreen", e.message ?: "error")
+                Currency.getInstance("EUR")
             }
-        }
-
-        var categoryElements by remember { mutableStateOf(convertSettingsToList(currentSettings)) }
-
-        if (!orderVisible) {
-            CategoryRow(
-                category = Category(
-                    cid = 0,
-                    label = stringResource(R.string.label_example_category),
-                    budget = 0.0,
-                    uid = 0,
-                ),
-                entries = emptyList(),
-                clicked = { },
-                longPress = { },
-                fields = categoryElements
-                    .filter { it.second >= 0 }
-                    .sortedBy { it.second }
-                    .map { it.first },
-
-                ) {
-                UserSettingViewModel.makeConverter(currentState.currencyCode).format(it)
-            }
-        }
-
-        Row(modifier = Modifier.padding(5.dp)) {
-            Button(onClick = { orderVisible = !orderVisible }, modifier = Modifier.fillMaxWidth()) {
-                if (orderVisible) {
-                    Text(stringResource(R.string.operation_stop_editing))
-                } else {
-                    Text(stringResource(R.string.operation_start_editing))
-                }
-            }
-        }
-        AnimatedVisibility(visible = orderVisible) {
-            OrderSelectionWidget(
-                elements = categoryElements,
-                visibilities = categoryElements
-                    .map { it.second >= 0 },
-                visibilityChanged = { pos, value ->
-                    if (value) {
-                        val newElements = categoryElements.toMutableList()
-                        newElements[pos] = newElements[pos].first to pos
-                        categoryElements = ensureHiddenLast(newElements)
-                    } else {
-                        val newElements = categoryElements.toMutableList()
-                        newElements[pos] = newElements[pos].first to -1
-                        categoryElements = ensureHiddenLast(newElements)
-                    }
-                },
-                orderChanged = { newList ->
-                    categoryElements = ensureHiddenLast(newList)
-                }
-            ) { element, modifier ->
-                Column(modifier = modifier.width(200.dp)) {
-                    Text(stringResource(element.first.label))
-                    Text(
-                        stringResource(element.first.description),
-                        style = MaterialTheme.typography.subtitle1
-                    )
-                }
-            }
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth()
-                .padding(10.dp),
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                FloatingActionButton(onClick = goBack) {
-                    Icon(
-                        Icons.Rounded.ArrowBack,
-                        contentDescription = stringResource(R.string.operation_cancel)
-                    )
-                }
-                FloatingActionButton(onClick = {
-                    val newSettings = categoryElements.fold(
-                        currentSettings.copy(
-                            currency = currentState.currencyCode,
-                        )
-                    ) { settings, element -> element.first.setter(settings, element.second) }
-                    updateSettings(newSettings)
-                }) {
-                    Icon(
-                        Icons.Rounded.Save,
-                        contentDescription = stringResource(R.string.operation_save_changes)
-                    )
-                }
-            }
-        }
+        )
     }
+    var categoryElements by remember { mutableStateOf(convertSettingsToList(currentSettings)) }
+    Scaffold(
+        content  = { padding ->
+            var orderVisible by remember { mutableStateOf(false) }
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Spacer(modifier = Modifier.height(10.dp))
+                val elements = Currency.getAvailableCurrencies().toList()
+
+                Log.d("UserSettingsScreen", "currency symbol is: ${currentSettings.currency}")
+                FilteredSelectionWidget<Currency>(
+                    label = stringResource(R.string.label_input_currency),
+                    items = elements,
+                    selectionChanged = { currentState = it },
+                    filterSelector = { it.currencyCode },
+                    stringSelector = { it.currencyCode + it.displayName + it.currencyCode },
+                    currentItem = currentState,
+                    initialExpanded = false
+                ) { item, modifier ->
+                    Row(modifier = modifier, horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text(text = item.currencyCode)
+                        Text(text = item.displayName)
+                        Text(text = item.symbol)
+                    }
+                }
+
+                    CategoryRow(
+                        category = Category(
+                            cid = 0,
+                            label = stringResource(R.string.label_example_category),
+                            budget = 0.0,
+                            uid = 0,
+                        ),
+                        entries = emptyList(),
+                        clicked = { },
+                        longPress = { },
+                        fields = categoryElements
+                            .filter { it.second >= 0 }
+                            .sortedBy { it.second }
+                            .map { it.first },
+
+                        ) {
+                        UserSettingViewModel.makeConverter(currentState.currencyCode).format(it)
+                    }
+                //}
+
+                Row(modifier = Modifier.padding(5.dp)) {
+                    Button(onClick = { orderVisible = !orderVisible }, modifier = Modifier.fillMaxWidth()) {
+                        if (orderVisible) {
+                            Text(stringResource(R.string.operation_stop_editing))
+                        } else {
+                            Text(stringResource(R.string.operation_start_editing))
+                        }
+                    }
+                }
+                AnimatedVisibility(visible = orderVisible) {
+                    OrderSelectionWidget(
+                        elements = categoryElements,
+                        visibilities = categoryElements
+                            .map { it.second >= 0 },
+                        visibilityChanged = { pos, value ->
+                            if (value) {
+                                val newElements = categoryElements.toMutableList()
+                                newElements[pos] = newElements[pos].first to pos
+                                categoryElements = ensureHiddenLast(newElements)
+                            } else {
+                                val newElements = categoryElements.toMutableList()
+                                newElements[pos] = newElements[pos].first to -1
+                                categoryElements = ensureHiddenLast(newElements)
+                            }
+                        },
+                        orderChanged = { newList ->
+                            categoryElements = ensureHiddenLast(newList)
+                        }
+                    ) { element, modifier ->
+                        Column(modifier = modifier.width(200.dp)) {
+                            Text(stringResource(element.first.label))
+                            Text(
+                                stringResource(element.first.description),
+                                style = MaterialTheme.typography.subtitle1
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        bottomBar = {
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+                    .padding(10.dp),
+                verticalArrangement = Arrangement.Bottom
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    FloatingActionButton(onClick = goBack) {
+                        Icon(
+                            Icons.Rounded.ArrowBack,
+                            contentDescription = stringResource(R.string.operation_cancel)
+                        )
+                    }
+                    FloatingActionButton(onClick = {
+                        val newSettings = categoryElements.fold(
+                            currentSettings.copy(
+                                currency = currentState.currencyCode,
+                            )
+                        ) { settings, element -> element.first.setter(settings, element.second) }
+                        updateSettings(newSettings)
+                    }) {
+                        Icon(
+                            Icons.Rounded.Save,
+                            contentDescription = stringResource(R.string.operation_save_changes)
+                        )
+                    }
+                }
+            }
+        }
+    )
 }
 
 

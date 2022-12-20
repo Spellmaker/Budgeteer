@@ -4,8 +4,6 @@ import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -34,6 +32,7 @@ import moe.chen.budgeteer.room.Category
 import moe.chen.budgeteer.viewmodel.OverviewViewModel
 import moe.chen.budgeteer.viewmodel.UserSettingViewModel
 import moe.chen.budgeteer.widgets.MainViewWidget
+import moe.chen.budgeteer.widgets.PaddedLazyColumn
 import java.time.ZonedDateTime
 
 @Composable
@@ -187,15 +186,7 @@ fun FabColumn(
             }
         }
     }
-
 }
-
-private val dummyCategory = Category(
-    cid = null,
-    label = "",
-    budget = 0.0,
-    uid = -1,
-)
 
 @Composable
 fun CategoryListWidget(
@@ -207,27 +198,23 @@ fun CategoryListWidget(
     fields: List<ComputedField>,
     formatter: @Composable (Double) -> String,
 ) {
-    LazyColumn(modifier = Modifier) {
-        items(items = categories.plus(dummyCategory)) {
-            if (it == dummyCategory) {
-                Column(modifier = Modifier.height(100.dp)) {
+    PaddedLazyColumn(
+        modifier = Modifier,
+        bottomPadding = 100.dp,
+        elements = categories
+    ) { _, it ->
+        val entries = getCategoryFlow(it).collectAsState(initial = emptyList()).value
 
-                }
-            } else {
-                val entries = getCategoryFlow(it).collectAsState(initial = emptyList()).value
+        Log.d("OverviewScreen", "cat $it entries in screen: $entries")
 
-                Log.d("OverviewScreen", "cat $it entries in screen: $entries")
-
-                CategoryRow(
-                    category = it,
-                    entries = entries,
-                    clicked = { clickCategory(it) },
-                    longPress = { longPress(it) },
-                    formatter = formatter,
-                    fields = fields
-                )
-            }
-        }
+        CategoryRow(
+            category = it,
+            entries = entries,
+            clicked = { clickCategory(it) },
+            longPress = { longPress(it) },
+            formatter = formatter,
+            fields = fields
+        )
     }
 }
 
