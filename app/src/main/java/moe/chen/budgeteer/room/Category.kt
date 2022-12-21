@@ -26,6 +26,7 @@ data class Category(
     @ColumnInfo(name = "label") val label: String,
     @ColumnInfo(name = "budget") val budget: Double,
     @ColumnInfo(name = "uid") val uid: Int,
+    @ColumnInfo(name = "order") val order: Int?,
 )
 
 @Dao
@@ -41,6 +42,9 @@ interface CategoryDao {
 
     @Update
     suspend fun updateCategory(category: Category)
+
+    @Update
+    suspend fun updateCategories(categories: List<Category>)
 
     @Delete
     suspend fun deleteCategory(category: Category)

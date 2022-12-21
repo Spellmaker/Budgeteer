@@ -92,6 +92,7 @@ fun EditCategoryScreen(
                                     existingCategory.value!!.uid,
                                     label.value,
                                     budget.value!!,
+                                    existingCategory.value!!.order,
                                 )
                             }
                             navController.navigate(
@@ -146,6 +147,7 @@ fun EditCategoryScreen(
                                         existingCategory.value!!.uid,
                                         label.value,
                                         budget.value!!,
+                                        existingCategory.value!!.order,
                                     )
                                 }
                                 navController.navigate(

@@ -10,24 +10,28 @@ fun exampleCategories() = listOf(
         label = "Arzt",
         budget = 10.0,
         uid = 1,
+        order = null,
     ),
     Category(
         cid = 1,
         label = "Haushalt",
         budget = 200.0,
         uid = 1,
+        order = null,
     ),
     Category(
         cid = 2,
         label = "Einkauf",
         budget = 10.0,
         uid = 1,
+        order = null,
     ),
     Category(
         cid = 3,
         label = "Spaß",
         budget = 10.0,
         uid = 1,
+        order = null,
     ),
 )
 

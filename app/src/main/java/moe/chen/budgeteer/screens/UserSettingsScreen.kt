@@ -92,6 +92,7 @@ fun UserSettingEditor(
                             label = stringResource(R.string.label_example_category),
                             budget = 0.0,
                             uid = 0,
+                            order = null,
                         ),
                         entries = emptyList(),
                         clicked = { },
@@ -100,7 +101,7 @@ fun UserSettingEditor(
                             .filter { it.second >= 0 }
                             .sortedBy { it.second }
                             .map { it.first },
-
+                        categoryToEdit = null
                         ) {
                         UserSettingViewModel.makeConverter(currentState.currencyCode).format(it)
                     }

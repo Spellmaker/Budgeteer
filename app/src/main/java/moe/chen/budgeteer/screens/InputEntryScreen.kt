@@ -93,7 +93,7 @@ fun InputEntryScreen(
 @Preview(showBackground = true)
 @Composable
 fun InputWidget(
-    category: Category? = Category(null, "test", 0.0, 0),
+    category: Category? = Category(null, "test", 0.0, 0, null),
     isValid: Boolean = true,
     amount: String = "0.0",
     setAmount: (String) -> Unit = {},

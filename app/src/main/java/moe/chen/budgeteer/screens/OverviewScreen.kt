@@ -1,6 +1,7 @@
 package moe.chen.budgeteer.screens
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -8,10 +9,8 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Settings
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.material.icons.rounded.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -31,6 +30,7 @@ import moe.chen.budgeteer.room.BudgetEntry
 import moe.chen.budgeteer.room.Category
 import moe.chen.budgeteer.viewmodel.OverviewViewModel
 import moe.chen.budgeteer.viewmodel.UserSettingViewModel
+import moe.chen.budgeteer.widgets.EFloatingActionButton
 import moe.chen.budgeteer.widgets.MainViewWidget
 import moe.chen.budgeteer.widgets.PaddedLazyColumn
 import java.time.ZonedDateTime
@@ -48,10 +48,13 @@ fun OverviewScreen(
     } else if (settings.value != settingsModel.invalidSettings) {
         val categories = model.categories.collectAsState()
         val converter = settingsModel.converterDefault.collectAsState()
+        var categoryToEdit by remember { mutableStateOf<Category?>(null) }
 
         OverviewWidget(
             navController = navController,
-            categories = categories.value,
+            categories = categories.value.sortedBy {
+                it.order ?: it.cid
+            },
             onAddCategory = {
                 navController.navigate(
                     BudgeteerScreens.AddCategoryScreen.name +
@@ -60,10 +63,14 @@ fun OverviewScreen(
             },
             getCategoryFlow = { model.categoryEntryFlow(it) },
             clickCategory = {
-                navController
-                    .navigate("${BudgeteerScreens.ExpenseInputScreen.name}/${it.cid!!}")
+                if (categoryToEdit == null) {
+                    navController
+                        .navigate("${BudgeteerScreens.ExpenseInputScreen.name}/${it.cid!!}")
+                } else {
+                    categoryToEdit = null
+                }
             },
-            longPress = {
+            navToCategoryEdit = {
                 navController
                     .navigate(
                         BudgeteerScreens.CategoryScreen.name +
@@ -79,7 +86,12 @@ fun OverviewScreen(
             fields = allCategories.map { it to it.extractor(settings.value!!) }
                 .filter { it.second >= 0 }
                 .sortedBy { it.second }
-                .map { it.first }
+                .map { it.first },
+            categoryToEdit = categoryToEdit,
+            setCategoryToEdit = { categoryToEdit = it },
+            onSaveCategories = { categoriesToSave ->
+                model.saveCategories(categoriesToSave)
+            }
         )
     }
 }
@@ -91,10 +103,13 @@ fun OverviewWidget(
     getCategoryFlow: (Category) -> Flow<List<BudgetEntry>>,
     onAddCategory: () -> Unit = {},
     clickCategory: (Category) -> Unit = {},
-    longPress: (Category) -> Unit = {},
+    navToCategoryEdit: (Category) -> Unit = {},
     accessSettings: () -> Unit,
     fields: List<ComputedField>,
+    categoryToEdit: Category?,
+    setCategoryToEdit: (Category?) -> Unit,
     formatter: @Composable (Double) -> String,
+    onSaveCategories: (List<Category>) -> Unit,
 ) {
     MainViewWidget(
         navController = navController,
@@ -130,6 +145,7 @@ fun OverviewWidget(
                 modifier = Modifier
                     .padding(it)
                     .fillMaxHeight()
+                    .clickable(onClick = { setCategoryToEdit(null) })
             ) {
                 Scaffold(
                     content = { padding ->
@@ -138,17 +154,95 @@ fun OverviewWidget(
                             categories,
                             getCategoryFlow,
                             clickCategory,
-                            longPress,
+                            { category -> setCategoryToEdit(category) },
                             fields,
                             formatter,
+                            categoryToEdit
                         )
                     },
                     bottomBar = {
-                        FabColumn(
-                            accessSettings = accessSettings,
-                            onAddCategory = onAddCategory,
-                        )
+                        if (categoryToEdit == null) {
+                            FabColumn(
+                                accessSettings = accessSettings,
+                                onAddCategory = onAddCategory,
+                            )
+                        } else {
+                            EditFabColumn(
+                                currentCategory = categoryToEdit,
+                                categories = categories,
+                                onSaveCategories = onSaveCategories,
+                                categoryEdit = navToCategoryEdit,
+                            )
+                        }
                     }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun EditFabColumn(
+    currentCategory: Category,
+    categories: List<Category>,
+    onSaveCategories: (List<Category>) -> Unit,
+    categoryEdit: (Category) -> Unit,
+) {
+    if (categories.any { it.order == null }) {
+        onSaveCategories(categories.mapIndexed { index, c -> c.copy(order = index) })
+    } else {
+        val categoryIndex = categories.indexOfFirst { it.cid == currentCategory.cid }
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .padding(10.dp),
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                EFloatingActionButton(
+                    enabled = categoryIndex < categories.size - 1,
+                    onClick = {
+                        Log.d("OverviewScreen", "category-size: ${categories.size} " +
+                                "index: $categoryIndex")
+                        val prev = categories[categoryIndex]
+                        val nxt = categories[categoryIndex + 1]
+                        onSaveCategories(
+                            listOf(
+                                prev.copy(order = nxt.order),
+                                nxt.copy(order = prev.order),
+                            )
+                        )
+                    },
+                    icon = Icons.Rounded.ArrowDownward,
+                    contentDescription = R.string.operation_down
+                )
+                FloatingActionButton(onClick = { categoryEdit(currentCategory) }) {
+                    Icon(
+                        Icons.Rounded.Edit,
+                        contentDescription = stringResource(R.string.operation_edit)
+                    )
+                }
+
+                EFloatingActionButton(
+                    enabled = categoryIndex > 0,
+                    onClick = {
+                        Log.d("OverviewScreen", "category-size: ${categories.size} " +
+                                "index: $categoryIndex")
+                        val prev = categories[categoryIndex - 1]
+                        val nxt = categories[categoryIndex]
+                        onSaveCategories(
+                            listOf(
+                                prev.copy(order = nxt.order),
+                                nxt.copy(order = prev.order),
+                            )
+                        )
+                    },
+                    icon = Icons.Rounded.ArrowUpward,
+                    contentDescription = R.string.operation_up
                 )
             }
         }
@@ -197,6 +291,7 @@ fun CategoryListWidget(
     longPress: (Category) -> Unit = {},
     fields: List<ComputedField>,
     formatter: @Composable (Double) -> String,
+    categoryToEdit: Category?,
 ) {
     PaddedLazyColumn(
         modifier = Modifier,
@@ -213,7 +308,8 @@ fun CategoryListWidget(
             clicked = { clickCategory(it) },
             longPress = { longPress(it) },
             formatter = formatter,
-            fields = fields
+            fields = fields,
+            categoryToEdit = categoryToEdit,
         )
     }
 }
@@ -228,6 +324,7 @@ fun RowPreview() {
             label = "Test",
             budget = 50.0,
             uid = 0,
+            order = null,
         ),
         entries = listOf(
             BudgetEntry(
@@ -239,6 +336,7 @@ fun RowPreview() {
         ),
         clicked = {},
         longPress = {},
+        categoryToEdit = null,
         fields = listOf(BudgetField, CurrentField, TrendField, SpendPerDayField),
         formatter = { converter.format(it) }
     )
@@ -251,21 +349,33 @@ fun CategoryRow(
     clicked: () -> Unit,
     longPress: () -> Unit,
     fields: List<ComputedField>,
+    categoryToEdit: Category?,
     formatter: @Composable (Double) -> String,
 ) {
+    val elevation = if (categoryToEdit?.cid == category.cid) {
+        20.dp
+    } else {
+        4.dp
+    }
+
+    var modifier = Modifier
+        .padding(4.dp)
+        .fillMaxWidth()
+        .height(150.dp)
+        .pointerInput(Unit) {
+            detectTapGestures(
+                onTap = { clicked() },
+                onLongPress = { longPress() }
+            )
+        }
+    if (categoryToEdit?.cid == category.cid) {
+        modifier = modifier.padding(10.dp)
+    }
+
     Card(
-        modifier = Modifier
-            .padding(4.dp)
-            .fillMaxWidth()
-            .height(150.dp)
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onTap = { clicked() },
-                    onLongPress = { longPress() }
-                )
-            },
+        modifier = modifier,
         shape = RoundedCornerShape(corner = CornerSize(14.dp)),
-        elevation = 4.dp
+        elevation = elevation
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

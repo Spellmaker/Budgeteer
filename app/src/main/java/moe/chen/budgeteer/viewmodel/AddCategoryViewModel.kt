@@ -22,7 +22,7 @@ class AddCategoryViewModel @Inject constructor(
     private val entryDao: BudgetEntryDao,
 ) : ViewModel() {
 
-    val invalidCategory = Category(42, "invalid", 0.0, 42)
+    val invalidCategory = Category(42, "invalid", 0.0, 42, null)
 
     private val categoryId: Int? = savedStateHandle.get<Int>("category")
 
@@ -48,7 +48,14 @@ class AddCategoryViewModel @Inject constructor(
         user: Int,
     ) {
         viewModelScope.launch {
-            categoryRepository.createCategory(Category(label = name, budget = budget, uid = user))
+            categoryRepository.createCategory(
+                Category(
+                    label = name,
+                    budget = budget,
+                    uid = user,
+                    order = null
+                )
+            )
         }
     }
 
@@ -57,6 +64,7 @@ class AddCategoryViewModel @Inject constructor(
         user: Int,
         name: String,
         budget: Double,
+        order: Int?,
     ) {
         viewModelScope.launch {
             Log.d("AddCategoryViewModel", "update with new budget $budget")
@@ -66,6 +74,7 @@ class AddCategoryViewModel @Inject constructor(
                     label = name,
                     budget = budget,
                     uid = user,
+                    order = order
                 )
             )
         }
