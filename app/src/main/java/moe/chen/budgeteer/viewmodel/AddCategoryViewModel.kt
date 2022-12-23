@@ -1,5 +1,6 @@
 package moe.chen.budgeteer.viewmodel
 
+import android.database.sqlite.SQLiteConstraintException
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -46,16 +47,22 @@ class AddCategoryViewModel @Inject constructor(
         name: String,
         budget: Double,
         user: Int,
+        callback: (Boolean) -> Unit,
     ) {
         viewModelScope.launch {
-            categoryRepository.createCategory(
-                Category(
-                    label = name,
-                    budget = budget,
-                    uid = user,
-                    order = null
+            try {
+                categoryRepository.createCategory(
+                    Category(
+                        label = name,
+                        budget = budget,
+                        uid = user,
+                        order = null
+                    )
                 )
-            )
+                callback(true)
+            } catch (e: SQLiteConstraintException) {
+                callback(false)
+            }
         }
     }
 
@@ -65,18 +72,24 @@ class AddCategoryViewModel @Inject constructor(
         name: String,
         budget: Double,
         order: Int?,
+        callback: (Boolean) -> Unit,
     ) {
         viewModelScope.launch {
             Log.d("AddCategoryViewModel", "update with new budget $budget")
-            categoryRepository.updateCategory(
-                Category(
-                    cid = id,
-                    label = name,
-                    budget = budget,
-                    uid = user,
-                    order = order
+            try {
+                categoryRepository.updateCategory(
+                    Category(
+                        cid = id,
+                        label = name,
+                        budget = budget,
+                        uid = user,
+                        order = order
+                    )
                 )
-            )
+                callback(true)
+            } catch (e: SQLiteConstraintException) {
+                callback(false)
+            }
         }
     }
 

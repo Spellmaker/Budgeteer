@@ -50,4 +50,6 @@
     <string name="help_category_overview">Hier wird eine Übersicht der Einträge in der Kategorie angezeigt. Tippe die Mülltonne eines Eintrag an, um ihn zu entfernen. Tippe den Eintrag an, um den Betrag zu editieren. Über das Stift-Symbol kann die Kategorie selber editiert werden.</string>
     <string name="no_categories">Willkommen in Budgeteer!\n\nHier gibt es noch nichts zu sehen, also füge schnell über den Plus Button unten rechts deine erste Ausgabenkategorie hinzu.\n\nOder passe zuerst die Einstellungen über das Zahnrad an.</string>
     <string name="field_help_intro">\nDie folgenden Felder sind aktuell aktiviert:</string>
+    <string name="error_label_taken">Der Kategoriename wurde bereits vergeben</string>
+    <string name="error_label_empty">Es wurde kein Name für die Kategorie vergeben</string>
 </resources>

@@ -1,5 +1,6 @@
 package moe.chen.budgeteer.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -10,6 +11,7 @@ import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Save
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -42,6 +44,41 @@ fun EditCategoryScreen(
     val label = remember { mutableStateOf(existingCategory.value?.label ?: "") }
     val budget = remember { mutableStateOf<Double?>(existingCategory.value?.budget ?: 0.0) }
     var budgetString by remember { mutableStateOf(formatCompact(budget.value!!)) }
+
+    val context = LocalContext.current
+    val error = stringResource(R.string.error_label_taken)
+    val errorNoContent = stringResource(R.string.error_label_empty)
+
+    val handler: (Boolean) -> Unit = {
+        if (it) {
+            navController.navigate(
+                BudgeteerScreens.OverviewScreen.name
+            )
+        } else {
+            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    val handleCreate: () -> Unit = {
+        if (budget.value != null) {
+            if (label.value.trim().isEmpty()) {
+                Toast.makeText(context, errorNoContent, Toast.LENGTH_LONG).show()
+            } else {
+                if (existingCategory.value == null) {
+                    viewModel.addCategory(label.value, budget.value!!, 0, handler)
+                } else {
+                    viewModel.updateCategory(
+                        existingCategory.value!!.cid!!,
+                        existingCategory.value!!.uid,
+                        label.value,
+                        budget.value!!,
+                        existingCategory.value!!.order,
+                        handler
+                    )
+                }
+            }
+        }
+    }
 
     MainViewWidget(navController = navController) {
         if (convertDefault.value != null) {
@@ -82,26 +119,8 @@ fun EditCategoryScreen(
                             currencyIsError = true
                         }
                     },
-                    create = {
-                        if (budget.value != null) {
-                            if (existingCategory.value == null) {
-                                viewModel.addCategory(label.value, budget.value!!, 0)
-                            } else {
-                                viewModel.updateCategory(
-                                    existingCategory.value!!.cid!!,
-                                    existingCategory.value!!.uid,
-                                    label.value,
-                                    budget.value!!,
-                                    existingCategory.value!!.order,
-                                )
-                            }
-                            navController.navigate(
-                                BudgeteerScreens.OverviewScreen.name
-                            )
-                        }
-                    }
+                    create = handleCreate
                 )
-
 
                 Column(
                     modifier = Modifier
@@ -137,24 +156,7 @@ fun EditCategoryScreen(
                                 )
                             }
                         }
-                        FloatingActionButton(onClick = {
-                            if (budget.value != null) {
-                                if (existingCategory.value == null) {
-                                    viewModel.addCategory(label.value, budget.value!!, 0)
-                                } else {
-                                    viewModel.updateCategory(
-                                        existingCategory.value!!.cid!!,
-                                        existingCategory.value!!.uid,
-                                        label.value,
-                                        budget.value!!,
-                                        existingCategory.value!!.order,
-                                    )
-                                }
-                                navController.navigate(
-                                    BudgeteerScreens.OverviewScreen.name
-                                )
-                            }
-                        }) {
+                        FloatingActionButton(onClick = handleCreate) {
                             Icon(
                                 Icons.Rounded.Save,
                                 contentDescription = stringResource(R.string.operation_save_changes)
