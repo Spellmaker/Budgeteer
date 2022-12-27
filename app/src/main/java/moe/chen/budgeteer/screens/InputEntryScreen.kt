@@ -25,6 +25,7 @@ import androidx.navigation.NavController
 import moe.chen.budgeteer.R
 import moe.chen.budgeteer.formatCompact
 import moe.chen.budgeteer.room.Category
+import moe.chen.budgeteer.room.CategoryType
 import moe.chen.budgeteer.viewmodel.InputEntryViewModel
 import moe.chen.budgeteer.widgets.MainViewWidget
 
@@ -93,7 +94,10 @@ fun InputEntryScreen(
 @Preview(showBackground = true)
 @Composable
 fun InputWidget(
-    category: Category? = Category(null, "test", 0.0, 0, null),
+    category: Category? = Category(
+        null,
+        "test", 0.0, 0, null, CategoryType.PER_MONTH
+    ),
     isValid: Boolean = true,
     amount: String = "0.0",
     setAmount: (String) -> Unit = {},

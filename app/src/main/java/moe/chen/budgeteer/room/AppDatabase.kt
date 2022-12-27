@@ -13,13 +13,13 @@ import moe.chen.budgeteer.data.DateTimeHandler
         BudgetEntry::class,
         UserSetting::class,
     ],
-    version = 5,
+    version = 6,
     autoMigrations = [
         AutoMigration(from = 2, to = 3),
     ],
     exportSchema = true,
 )
-@TypeConverters(DateTimeHandler::class)
+@TypeConverters(DateTimeHandler::class, CategoryTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
 

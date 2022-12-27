@@ -18,6 +18,7 @@ import moe.chen.budgeteer.R
 import moe.chen.budgeteer.data.ComputedField
 import moe.chen.budgeteer.data.allCategories
 import moe.chen.budgeteer.room.Category
+import moe.chen.budgeteer.room.CategoryType
 import moe.chen.budgeteer.room.UserSetting
 import moe.chen.budgeteer.viewmodel.UserSettingViewModel
 import moe.chen.budgeteer.widgets.FilteredSelectionWidget
@@ -93,6 +94,7 @@ fun UserSettingEditor(
                             budget = 0.0,
                             uid = 0,
                             order = null,
+                            type = CategoryType.PER_MONTH,
                         ),
                         entries = emptyList(),
                         clicked = { },

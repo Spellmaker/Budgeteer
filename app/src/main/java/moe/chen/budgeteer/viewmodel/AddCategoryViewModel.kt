@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import moe.chen.budgeteer.room.BudgetEntryDao
 import moe.chen.budgeteer.room.Category
 import moe.chen.budgeteer.room.CategoryDao
+import moe.chen.budgeteer.room.CategoryType
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,7 +24,10 @@ class AddCategoryViewModel @Inject constructor(
     private val entryDao: BudgetEntryDao,
 ) : ViewModel() {
 
-    val invalidCategory = Category(42, "invalid", 0.0, 42, null)
+    val invalidCategory = Category(
+        42, "invalid", 0.0,
+        42, null, CategoryType.PER_MONTH
+    )
 
     private val categoryId: Int? = savedStateHandle.get<Int>("category")
 
@@ -47,6 +51,7 @@ class AddCategoryViewModel @Inject constructor(
         name: String,
         budget: Double,
         user: Int,
+        type: CategoryType,
         callback: (Boolean) -> Unit,
     ) {
         viewModelScope.launch {
@@ -56,7 +61,8 @@ class AddCategoryViewModel @Inject constructor(
                         label = name,
                         budget = budget,
                         uid = user,
-                        order = null
+                        order = null,
+                        type = type,
                     )
                 )
                 callback(true)
@@ -72,6 +78,7 @@ class AddCategoryViewModel @Inject constructor(
         name: String,
         budget: Double,
         order: Int?,
+        type: CategoryType,
         callback: (Boolean) -> Unit,
     ) {
         viewModelScope.launch {
@@ -83,7 +90,8 @@ class AddCategoryViewModel @Inject constructor(
                         label = name,
                         budget = budget,
                         uid = user,
-                        order = order
+                        order = order,
+                        type = type,
                     )
                 )
                 callback(true)
