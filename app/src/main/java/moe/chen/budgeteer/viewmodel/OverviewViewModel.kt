@@ -37,8 +37,8 @@ class OverviewViewModel @Inject constructor(
         }
     }
 
-    fun categoryEntryFlow(category: Category) =
-        entryDao.listEntries(category.cid!!, ZonedDateTime.now().monthValue)
+    fun categoryEntryFlow(category: Category, month: ZonedDateTime) =
+        entryDao.listEntries(category.cid!!, month.monthValue, month.year)
 
     fun saveCategories(categories: List<Category>) {
         viewModelScope.launch { categoryDao.updateCategories(categories) }

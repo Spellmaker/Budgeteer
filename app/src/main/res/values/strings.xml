@@ -30,6 +30,9 @@
     <string name="operation_start_editing">Edit computed fields per category</string>
     <string name="operation_stop_editing">Hide editor</string>
     <string name="operation_save_changes">Save Changes</string>
+    <string name="operation_previous">Previous</string>
+    <string name="operation_next">Next</string>
+    <string name="operation_today">Today</string>
     <string name="application_title">Budgeteer%1$s</string>
     <string name="operation_settings">Settings</string>
     <string name="operation_logout">Logout</string>

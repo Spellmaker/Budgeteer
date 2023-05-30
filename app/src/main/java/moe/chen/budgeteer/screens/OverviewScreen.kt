@@ -32,6 +32,7 @@ import moe.chen.budgeteer.viewmodel.OverviewViewModel
 import moe.chen.budgeteer.viewmodel.UserSettingViewModel
 import moe.chen.budgeteer.widgets.EFloatingActionButton
 import moe.chen.budgeteer.widgets.MainViewWidget
+import moe.chen.budgeteer.widgets.MonthSelector
 import moe.chen.budgeteer.widgets.PaddedLazyColumn
 import java.time.ZonedDateTime
 
@@ -49,9 +50,11 @@ fun OverviewScreen(
         val categories = model.categories.collectAsState()
         val converter = settingsModel.converterDefault.collectAsState()
         var categoryToEdit by remember { mutableStateOf<Category?>(null) }
+        var selectedMonth by remember { mutableStateOf(ZonedDateTime.now()) }
 
         OverviewWidget(
             navController = navController,
+            selectedMonth = selectedMonth,
             categories = categories.value.sortedBy {
                 it.order ?: it.cid
             },
@@ -61,7 +64,7 @@ fun OverviewScreen(
                             "/0/-1"
                 )
             },
-            getCategoryFlow = { model.categoryEntryFlow(it) },
+            getCategoryFlow = { model.categoryEntryFlow(it, selectedMonth) },
             clickCategory = {
                 if (categoryToEdit == null) {
                     navController
@@ -91,7 +94,8 @@ fun OverviewScreen(
             setCategoryToEdit = { categoryToEdit = it },
             onSaveCategories = { categoriesToSave ->
                 model.saveCategories(categoriesToSave)
-            }
+            },
+            onChangeMonth = { month -> selectedMonth = month }
         )
     }
 }
@@ -99,6 +103,7 @@ fun OverviewScreen(
 @Composable
 fun OverviewWidget(
     navController: NavController,
+    selectedMonth: ZonedDateTime,
     categories: List<Category> = exampleCategories(),
     getCategoryFlow: (Category) -> Flow<List<BudgetEntry>>,
     onAddCategory: () -> Unit = {},
@@ -110,6 +115,7 @@ fun OverviewWidget(
     setCategoryToEdit: (Category?) -> Unit,
     formatter: @Composable (Double) -> String,
     onSaveCategories: (List<Category>) -> Unit,
+    onChangeMonth: (ZonedDateTime) -> Unit,
 ) {
     MainViewWidget(
         navController = navController,
@@ -149,16 +155,24 @@ fun OverviewWidget(
             ) {
                 Scaffold(
                     content = { padding ->
-                        CategoryListWidget(
-                            padding,
-                            categories,
-                            getCategoryFlow,
-                            clickCategory,
-                            { category -> setCategoryToEdit(category) },
-                            fields,
-                            formatter,
-                            categoryToEdit
-                        )
+                        Column(
+                            modifier = Modifier.fillMaxWidth().fillMaxHeight()
+                        ) {
+                            MonthSelector(
+                                onMonthChange = onChangeMonth,
+                                currentMonth = selectedMonth,
+                            )
+                            CategoryListWidget(
+                                padding,
+                                categories,
+                                getCategoryFlow,
+                                clickCategory,
+                                { category -> setCategoryToEdit(category) },
+                                fields,
+                                formatter,
+                                categoryToEdit
+                            )
+                        }
                     },
                     bottomBar = {
                         if (categoryToEdit == null) {
