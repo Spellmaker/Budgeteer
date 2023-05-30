@@ -28,7 +28,6 @@ import moe.chen.budgeteer.preview.exampleCategories
 import moe.chen.budgeteer.preview.exampleEntries
 import moe.chen.budgeteer.room.BudgetEntry
 import moe.chen.budgeteer.room.Category
-import moe.chen.budgeteer.room.CategoryType
 import moe.chen.budgeteer.viewmodel.OverviewViewModel
 import moe.chen.budgeteer.viewmodel.UserSettingViewModel
 import moe.chen.budgeteer.widgets.EFloatingActionButton
@@ -326,7 +325,6 @@ fun RowPreview() {
             budget = 50.0,
             uid = 0,
             order = null,
-            type = CategoryType.PER_MONTH,
         ),
         entries = listOf(
             BudgetEntry(

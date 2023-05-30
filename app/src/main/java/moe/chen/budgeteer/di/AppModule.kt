@@ -13,7 +13,6 @@ import dagger.hilt.components.SingletonComponent
 import moe.chen.budgeteer.room.*
 import moe.chen.budgeteer.room.migration.MIGRATION_3_4
 import moe.chen.budgeteer.room.migration.MIGRATION_4_5
-import moe.chen.budgeteer.room.migration.MIGRATION_5_6
 import javax.inject.Singleton
 
 private val Context.userDataStore: DataStore<Preferences>
@@ -49,7 +48,6 @@ object AppModule {
         Room.databaseBuilder(context, AppDatabase::class.java, "budgeteer_db")
             .addMigrations(MIGRATION_3_4)
             .addMigrations(MIGRATION_4_5)
-            .addMigrations(MIGRATION_5_6)
             .addCallback(SetupCallback)
             .build()
 

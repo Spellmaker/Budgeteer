@@ -2,7 +2,6 @@ package moe.chen.budgeteer.preview
 
 import moe.chen.budgeteer.room.BudgetEntry
 import moe.chen.budgeteer.room.Category
-import moe.chen.budgeteer.room.CategoryType
 import java.time.ZonedDateTime
 
 fun exampleCategories() = listOf(
@@ -12,7 +11,6 @@ fun exampleCategories() = listOf(
         budget = 10.0,
         uid = 1,
         order = null,
-        type = CategoryType.PER_MONTH,
     ),
     Category(
         cid = 1,
@@ -20,7 +18,6 @@ fun exampleCategories() = listOf(
         budget = 200.0,
         uid = 1,
         order = null,
-        type = CategoryType.PER_MONTH,
     ),
     Category(
         cid = 2,
@@ -28,7 +25,6 @@ fun exampleCategories() = listOf(
         budget = 10.0,
         uid = 1,
         order = null,
-        type = CategoryType.PER_MONTH,
     ),
     Category(
         cid = 3,
@@ -36,7 +32,6 @@ fun exampleCategories() = listOf(
         budget = 10.0,
         uid = 1,
         order = null,
-        type = CategoryType.PER_MONTH,
     ),
 )
 

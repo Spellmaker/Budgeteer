@@ -1,9 +1,7 @@
 package moe.chen.budgeteer.room
 
-import androidx.annotation.StringRes
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
-import moe.chen.budgeteer.R
 
 @Entity(
     foreignKeys = [
@@ -29,25 +27,7 @@ data class Category(
     @ColumnInfo(name = "budget") val budget: Double,
     @ColumnInfo(name = "uid") val uid: Int,
     @ColumnInfo(name = "order") val order: Int?,
-    @ColumnInfo(name = "type") val type: CategoryType,
 )
-
-class CategoryTypeConverter {
-
-    @TypeConverter
-    fun toCategoryType(name: String) = CategoryType.valueOf(name)
-
-    @TypeConverter
-    fun fromCategoryType(type: CategoryType) = type.name
-}
-
-enum class CategoryType(
-    @StringRes val label: Int
-) {
-    PER_MONTH(label = R.string.label_per_month),
-    PER_WEEK(label = R.string.label_per_week),
-    PER_DAY(label = R.string.label_per_day);
-}
 
 @Dao
 interface CategoryDao {

@@ -52,8 +52,4 @@
     <string name="field_help_intro">\nDie folgenden Felder sind aktuell aktiviert:</string>
     <string name="error_label_taken">Der Kategoriename wurde bereits vergeben</string>
     <string name="error_label_empty">Es wurde kein Name für die Kategorie vergeben</string>
-    <string name="label_per_month">Monatlich</string>
-    <string name="label_per_week">Wöchentlich</string>
-    <string name="label_per_day">Täglich</string>
-    <string name="label_recurrence">Budget Zeitraum</string>
 </resources>

@@ -51,8 +51,4 @@
     <string name="field_help_intro">\nThe following fields are currently visible:</string>
     <string name="error_label_taken">The category label has already been taken</string>
     <string name="error_label_empty">The category label has not been filled</string>
-    <string name="label_per_month">Monthly</string>
-    <string name="label_per_week">Weekly</string>
-    <string name="label_per_day">Day</string>
-    <string name="label_recurrence">Budget recurrence</string>
 </resources>
