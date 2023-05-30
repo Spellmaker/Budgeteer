@@ -41,8 +41,9 @@ interface BudgetEntryDao {
 
     @Query("SELECT * FROM budgetentry " +
             "WHERE cid = :cid " +
-            "AND strftime('%m', date) = :month")
-    fun internalListEntries(cid: Int, month: String): Flow<List<BudgetEntry>>
+            "AND strftime('%m', date) = :month " +
+            "AND strftime('%Y', date) = :year")
+    fun internalListEntries(cid: Int, month: String, year: String): Flow<List<BudgetEntry>>
 
     @Query("SELECT * FROM budgetentry")
     suspend fun findAllEntries(): List<BudgetEntry>
@@ -50,12 +51,12 @@ interface BudgetEntryDao {
     @Update
     suspend fun updateEntry(entry: BudgetEntry)
 
-    fun listEntries(cid: Int, month: Int): Flow<List<BudgetEntry>> {
+    fun listEntries(cid: Int, month: Int, year: Int): Flow<List<BudgetEntry>> {
         val actualMonth = if (month < 10) {
             "0$month"
         } else {
             "$month"
         }
-        return internalListEntries(cid, actualMonth)
+        return internalListEntries(cid, actualMonth, "$year")
     }
 }

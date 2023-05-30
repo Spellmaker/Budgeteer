@@ -17,6 +17,9 @@
     <string name="operation_add">Hinzufügen</string>
     <string name="operation_submit">Abschicken</string>
     <string name="operation_cancel">Abbrechen</string>
+    <string name="operation_previous">Zurück</string>
+    <string name="operation_next">Nächster</string>
+    <string name="operation_today">Heute</string>
     <string name="label_amount">Betrag</string>
     <string name="notify_user_created">Benutzer angelegt</string>
     <string name="notify_user_creation_error">Benutzer konnte nicht angelegt werden, Nutzername evtl vergeben</string>

@@ -12,7 +12,6 @@ import moe.chen.budgeteer.room.BudgetEntry
 import moe.chen.budgeteer.room.BudgetEntryDao
 import moe.chen.budgeteer.room.Category
 import moe.chen.budgeteer.room.CategoryDao
-import java.time.ZonedDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,7 +37,7 @@ class CategoryDetailViewModel @Inject constructor(
     }
 
     fun categoryEntryFlow(category: Category) =
-        entryDao.listEntries(category.cid!!, ZonedDateTime.now().monthValue)
+        entryDao.listEntries(category.cid!!)
 
     fun removeEntry(entry: BudgetEntry) {
         viewModelScope.launch {
