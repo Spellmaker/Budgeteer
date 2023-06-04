@@ -50,6 +50,11 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideLabelRecommendationDao(appDatabase: AppDatabase): LabelRecommendationDao =
+        appDatabase.labelRecommendationDao()
+
+    @Singleton
+    @Provides
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
         return Room.databaseBuilder(context, AppDatabase::class.java, "budgeteer_db")
             .addMigrations(MIGRATION_3_4)

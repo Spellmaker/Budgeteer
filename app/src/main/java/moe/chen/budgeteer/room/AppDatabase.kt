@@ -15,12 +15,14 @@ import moe.chen.budgeteer.data.DateTimeHandler
         BudgetEntry::class,
         UserSetting::class,
         CategoryBudget::class,
+        LabelRecommendation::class,
     ],
-    version = 8,
+    version = 9,
     autoMigrations = [
         AutoMigration(from = 2, to = 3),
         AutoMigration(from = 6, to = 7, spec = AppDatabase.AutoMigrate_6_7::class),
         AutoMigration(from = 7, to = 8),
+        AutoMigration(from = 8, to = 9),
     ],
     exportSchema = true,
 )
@@ -38,4 +40,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun userSettingDao(): UserSettingDao
 
     abstract fun categoryBudgetDao(): CategoryBudgetDao
+
+    abstract fun labelRecommendationDao(): LabelRecommendationDao
 }

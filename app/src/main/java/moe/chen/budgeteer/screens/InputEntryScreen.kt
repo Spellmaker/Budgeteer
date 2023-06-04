@@ -28,6 +28,7 @@ import moe.chen.budgeteer.room.Category
 import moe.chen.budgeteer.viewmodel.InputEntryViewModel
 import moe.chen.budgeteer.widgets.MainViewWidget
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun InputEntryScreen(
     navController: NavController,
@@ -37,6 +38,8 @@ fun InputEntryScreen(
     if (existingEntry.value == model.invalidEntry) {
         return
     }
+
+    val recommendations = model.labels.collectAsState()
 
     var amountDouble by remember { mutableDoubleStateOf(existingEntry.value?.amount ?: 0.0) }
     var entryLabel by remember { mutableStateOf(existingEntry.value?.label ?: "") }
@@ -52,6 +55,7 @@ fun InputEntryScreen(
     MainViewWidget(navController = navController) {
         if (category.value != null) {
             InputWidget(
+                recommendations = recommendations.value.map { it.label },
                 category = category.value,
                 amount = amountString,
                 entryLabel = entryLabel,
@@ -93,9 +97,11 @@ fun InputEntryScreen(
     }
 }
 
+@ExperimentalLayoutApi
 @Preview(showBackground = true)
 @Composable
 fun InputWidget(
+    recommendations: List<String> = listOf("doener", "dm", "rewe", "longelong", "schlangelang"),
     category: Category? = Category(null, "test", 0, null),
     isValid: Boolean = true,
     amount: String = "0.0",
@@ -120,6 +126,29 @@ fun InputWidget(
         }
         Row {
             TextField(
+                value = entryLabel,
+                onValueChange = setLabel,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp),
+                label = { Text(stringResource(R.string.label_label)) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Decimal
+                ),
+            )
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        FlowRow(modifier = Modifier.fillMaxWidth()) {
+            recommendations.forEach { label ->
+                RoundedButton(enabled = true, text = label, modifier = Modifier) {
+                    setLabel(label)
+                }
+            }
+        }
+
+        Row {
+            TextField(
                 value = amount,
                 onValueChange = setAmount,
                 isError = !isValid,
@@ -137,20 +166,6 @@ fun InputWidget(
                         createEntry()
                     }
                 })
-            )
-        }
-        Row {
-            TextField(
-                value = entryLabel,
-                onValueChange = setLabel,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp),
-                label = { Text(stringResource(R.string.label_label)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Decimal
-                ),
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
@@ -231,7 +246,6 @@ fun InputWidget(
         }
     }
 }
-
 @Composable
 fun AmountButton(
     enabled: Boolean,
@@ -239,12 +253,30 @@ fun AmountButton(
     changeAmount: (Double) -> Unit,
     formatter: (Double) -> String
 ) {
+    RoundedButton(
+        modifier = Modifier.width(100.dp),
+        enabled = enabled,
+        text = formatter(amount),
+        onClick = {
+            if (enabled) {
+                changeAmount(amount)
+            }
+        }
+    )
+}
+
+@Composable
+fun RoundedButton(
+    modifier: Modifier,
+    enabled: Boolean,
+    text: String,
+    onClick: () -> Unit,
+) {
     Surface(
         elevation = 2.dp,
         shape = CircleShape,//MaterialTheme.shapes.small,
         border = ButtonDefaults.outlinedBorder,
-        modifier = Modifier
-            .width(100.dp)
+        modifier = modifier
             .height(74.dp)
             .padding(5.dp)
             .let {
@@ -262,15 +294,10 @@ fun AmountButton(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                formatter(amount),
+                text,
                 fontSize = 20.sp,
                 modifier = Modifier
-                    .clickable(onClick = {
-                        if (enabled) {
-                            changeAmount(amount)
-                        }
-                    }
-                    )
+                    .clickable(onClick = onClick)
                     .padding(5.dp)
                     .background(MaterialTheme.colors.primary),
                 color = MaterialTheme.colors.onPrimary

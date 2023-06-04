@@ -14,6 +14,8 @@ import moe.chen.budgeteer.room.BudgetEntry
 import moe.chen.budgeteer.room.BudgetEntryDao
 import moe.chen.budgeteer.room.Category
 import moe.chen.budgeteer.room.CategoryDao
+import moe.chen.budgeteer.room.LabelRecommendation
+import moe.chen.budgeteer.room.LabelRecommendationDao
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
@@ -21,6 +23,7 @@ import javax.inject.Inject
 class InputEntryViewModel @Inject constructor(
     private val categoryDao: CategoryDao,
     private val entryDao: BudgetEntryDao,
+    private val labelDao: LabelRecommendationDao,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -40,15 +43,31 @@ class InputEntryViewModel @Inject constructor(
 
     private val _entry = MutableStateFlow<BudgetEntry?>(invalidEntry)
 
+    private val _recommendations = MutableStateFlow<List<LabelRecommendation>>(emptyList())
+
     val entry = _entry.asStateFlow()
 
+    val labels = _recommendations.asStateFlow()
+
     init {
+        Log.d("InputEntryViewModel", "launching things in scope")
         viewModelScope.launch {
             currentId = categoryId
             categoryDao.findCategory(categoryId)
                 .takeWhile { currentId == categoryId }
                 .distinctUntilChanged()
                 .collect { category -> _category.value = category }
+        }
+        viewModelScope.launch {
+            currentId = categoryId
+            labelDao
+                .getForCategory(categoryId)
+                .takeWhile { currentId == categoryId }
+                .distinctUntilChanged()
+                .collect { labels ->
+                    Log.d("InputEntryViewModel", "emitting labels $labels")
+                    _recommendations.value = labels
+                }
         }
         if (budgetId != null && budgetId >= 0) {
             viewModelScope.launch {
@@ -82,7 +101,7 @@ class InputEntryViewModel @Inject constructor(
                             amount = amount,
                             cid = existing.cid,
                             date = existing.date,
-                            label = label
+                            label = label?.trim()
                         )
                     )
                 } else {
@@ -93,8 +112,29 @@ class InputEntryViewModel @Inject constructor(
                             amount = amount,
                             cid = id,
                             date = ZonedDateTime.now(),
-                            label = label,
+                            label = label?.trim(),
                         )
+                    )
+                }
+                // updated recommendations
+                if (!label.isNullOrBlank()) {
+                    val currentLabels = labels.value
+                    val result = mutableListOf<String>()
+                    result.add(label.trim())
+                    result.addAll(currentLabels.map { it.label }.filter { it != label.trim() } )
+
+                    Log.d("InputEntryViewModel", "created labels: $result")
+
+                    labelDao.deleteAll(id)
+                    labelDao.storeAll(
+                        result.take(10).mapIndexed { index, l ->
+                            LabelRecommendation(
+                                id = null,
+                                cid = id,
+                                label = l,
+                                priority = index
+                            )
+                        }
                     )
                 }
             }
