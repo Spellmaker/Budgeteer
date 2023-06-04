@@ -157,13 +157,14 @@ fun ExpenseWidget(
                     .clickable(onClick = onDelete),
             )
             Column(modifier = Modifier) {
-                Text(
-                    item.label ?: "",
-                    modifier = Modifier
-                )
+                if (!item.label.isNullOrBlank()) {
+                    Text(
+                        item.label,
+                        modifier = Modifier
+                    )
+                }
                 Text(
                     dateFormatter.format(item.date.toLocalDateTime()),
-                    //DateTimeFormatter.ISO_ZONED_DATE_TIME.format(item.date),
                     modifier = Modifier
                 )
             }
