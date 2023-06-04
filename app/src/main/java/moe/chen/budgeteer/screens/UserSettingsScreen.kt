@@ -18,6 +18,7 @@ import moe.chen.budgeteer.R
 import moe.chen.budgeteer.data.ComputedField
 import moe.chen.budgeteer.data.allCategories
 import moe.chen.budgeteer.room.Category
+import moe.chen.budgeteer.room.CategoryBudget
 import moe.chen.budgeteer.room.UserSetting
 import moe.chen.budgeteer.viewmodel.UserSettingViewModel
 import moe.chen.budgeteer.widgets.FilteredSelectionWidget
@@ -90,7 +91,6 @@ fun UserSettingEditor(
                         category = Category(
                             cid = 0,
                             label = stringResource(R.string.label_example_category),
-                            budget = 0.0,
                             uid = 0,
                             order = null,
                         ),
@@ -101,7 +101,8 @@ fun UserSettingEditor(
                             .filter { it.second >= 0 }
                             .sortedBy { it.second }
                             .map { it.first },
-                        categoryToEdit = null
+                        categoryToEdit = null,
+                        budget = CategoryBudget(0, 0.0, 0, 0, 0)
                         ) {
                         UserSettingViewModel.makeConverter(currentState.currencyCode).format(it)
                     }

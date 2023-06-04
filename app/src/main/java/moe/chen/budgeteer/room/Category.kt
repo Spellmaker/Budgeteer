@@ -24,7 +24,6 @@ import kotlinx.coroutines.flow.Flow
 data class Category(
     @PrimaryKey val cid: Int? = null,
     @ColumnInfo(name = "label") val label: String,
-    @ColumnInfo(name = "budget") val budget: Double,
     @ColumnInfo(name = "uid") val uid: Int,
     @ColumnInfo(name = "order") val order: Int?,
 )

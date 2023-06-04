@@ -19,6 +19,7 @@ data class BudgetEntry(
     @ColumnInfo(name = "amount") val amount: Double,
     @ColumnInfo(name = "cid") val cid: Int,
     @ColumnInfo(name = "date") val date: ZonedDateTime,
+    @ColumnInfo(name = "label") val label: String?,
 )
 
 @Dao

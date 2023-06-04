@@ -28,6 +28,9 @@ import moe.chen.budgeteer.preview.exampleCategories
 import moe.chen.budgeteer.preview.exampleEntries
 import moe.chen.budgeteer.room.BudgetEntry
 import moe.chen.budgeteer.room.Category
+import moe.chen.budgeteer.room.CategoryBudget
+import moe.chen.budgeteer.ui.theme.NotOkColor
+import moe.chen.budgeteer.ui.theme.NotOkColorDarkMode
 import moe.chen.budgeteer.viewmodel.OverviewViewModel
 import moe.chen.budgeteer.viewmodel.UserSettingViewModel
 import moe.chen.budgeteer.widgets.EFloatingActionButton
@@ -65,6 +68,7 @@ fun OverviewScreen(
                 )
             },
             getCategoryFlow = { model.categoryEntryFlow(it, selectedMonth) },
+            getBudgetFlow = { model.categoryBudgetFlow(it, selectedMonth) },
             clickCategory = {
                 if (categoryToEdit == null) {
                     navController
@@ -106,6 +110,7 @@ fun OverviewWidget(
     selectedMonth: ZonedDateTime,
     categories: List<Category> = exampleCategories(),
     getCategoryFlow: (Category) -> Flow<List<BudgetEntry>>,
+    getBudgetFlow: (Category) -> Flow<CategoryBudget?>,
     onAddCategory: () -> Unit = {},
     clickCategory: (Category) -> Unit = {},
     navToCategoryEdit: (Category) -> Unit = {},
@@ -156,7 +161,9 @@ fun OverviewWidget(
                 Scaffold(
                     content = { padding ->
                         Column(
-                            modifier = Modifier.fillMaxWidth().fillMaxHeight()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight()
                         ) {
                             MonthSelector(
                                 onMonthChange = onChangeMonth,
@@ -166,6 +173,7 @@ fun OverviewWidget(
                                 padding,
                                 categories,
                                 getCategoryFlow,
+                                getBudgetFlow,
                                 clickCategory,
                                 { category -> setCategoryToEdit(category) },
                                 fields,
@@ -301,6 +309,7 @@ fun CategoryListWidget(
     paddingValues: PaddingValues,
     categories: List<Category> = exampleCategories(),
     getCategoryFlow: (Category) -> Flow<List<BudgetEntry>>,
+    getBudgetFlow: (Category) -> Flow<CategoryBudget?>,
     clickCategory: (Category) -> Unit = {},
     longPress: (Category) -> Unit = {},
     fields: List<ComputedField>,
@@ -313,11 +322,19 @@ fun CategoryListWidget(
         elements = categories
     ) { _, it ->
         val entries = getCategoryFlow(it).collectAsState(initial = emptyList()).value
+        val budget = getBudgetFlow(it).collectAsState(initial = CategoryBudget(
+            id = 0,
+            budget = 0.0,
+            cid = 0,
+            year = 0,
+            month = 0,
+        )).value
 
         Log.d("OverviewScreen", "cat $it entries in screen: $entries")
 
         CategoryRow(
             category = it,
+            budget = budget,
             entries = entries,
             clicked = { clickCategory(it) },
             longPress = { longPress(it) },
@@ -336,7 +353,6 @@ fun RowPreview() {
         category = Category(
             cid = 0,
             label = "Test",
-            budget = 50.0,
             uid = 0,
             order = null,
         ),
@@ -345,6 +361,7 @@ fun RowPreview() {
                 bid = 0,
                 amount = 10.0,
                 cid = 0,
+                label = null,
                 date = ZonedDateTime.now(),
             )
         ),
@@ -352,13 +369,15 @@ fun RowPreview() {
         longPress = {},
         categoryToEdit = null,
         fields = listOf(BudgetField, CurrentField, TrendField, SpendPerDayField),
-        formatter = { converter.format(it) }
+        formatter = { converter.format(it) },
+        budget = CategoryBudget(id = 0, budget = 50.0, year = 10, month = 10, cid = 0)
     )
 }
 
 @Composable
 fun CategoryRow(
     category: Category,
+    budget: CategoryBudget?,
     entries: List<BudgetEntry>,
     clicked: () -> Unit,
     longPress: () -> Unit,
@@ -413,6 +432,7 @@ fun CategoryRow(
             ) {
                 CategorySummary(
                     category = category,
+                    budget = budget,
                     entries = entries,
                     formatter = formatter,
                     fields = fields,
@@ -427,14 +447,18 @@ fun CategoryRow(
 fun CategorySummary(
     category: Category,
     entries: List<BudgetEntry> = exampleEntries(),
+    budget: CategoryBudget?,
     fields: List<ComputedField>,
     formatter: @Composable (Double) -> String,
 ) {
-    val computed = fields.map { field ->
-        val value = field.computation(category, entries)
-        val color = field.colorSelector(category, value, isSystemInDarkTheme())
-        Triple(value, color, field)
-    }
+
+    val computed = budget?.let { b ->
+        fields.map { field ->
+            val value = field.computation(category, b, entries)
+            val color = field.colorSelector(category, b, value, isSystemInDarkTheme())
+            Triple(value, color, field)
+        }
+    } ?: emptyList()
 
     Row(
         modifier = Modifier
@@ -442,6 +466,13 @@ fun CategorySummary(
             .fillMaxWidth()
     ) {
         Column(modifier = Modifier.fillMaxWidth(0.6f)) {
+            if (budget == null) {
+                Text(stringResource(R.string.label_no_budget), color = if (isSystemInDarkTheme()) {
+                    NotOkColorDarkMode
+                } else {
+                    NotOkColor
+                })
+            }
             computed.forEach { Text(stringResource(it.third.label), color = it.second) }
         }
         Column(

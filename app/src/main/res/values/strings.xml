@@ -13,6 +13,8 @@
     <string name="add_new_category">Add new category</string>
     <string name="category_name">Category Name</string>
     <string name="category_budget">Budget</string>
+    <string name="label_no_budget">No Budget for date</string>
+    <string name="label_label">Entry Label</string>
     <string name="operation_add">Add</string>
     <string name="operation_submit">Submit</string>
     <string name="operation_cancel">Cancel</string>

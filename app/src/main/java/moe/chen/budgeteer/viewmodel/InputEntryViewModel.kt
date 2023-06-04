@@ -28,7 +28,8 @@ class InputEntryViewModel @Inject constructor(
         bid = 42,
         amount = -42.0,
         cid = 42,
-        date = ZonedDateTime.now()
+        date = ZonedDateTime.now(),
+        label = null,
     )
 
     private val categoryId: Int = savedStateHandle.get<Int>("category")!!
@@ -64,7 +65,7 @@ class InputEntryViewModel @Inject constructor(
 
     private var currentId: Int? = null
 
-    fun addOrModifyEntry(amount: Double) {
+    fun addOrModifyEntry(amount: Double, label: String?) {
         viewModelScope.launch {
             val existing = entry.value
 
@@ -77,11 +78,12 @@ class InputEntryViewModel @Inject constructor(
                     )
                     entryDao.updateEntry(
                         BudgetEntry(
-                        bid = existing.bid,
-                        amount = amount,
-                        cid = existing.cid,
-                        date = existing.date,
-                    )
+                            bid = existing.bid,
+                            amount = amount,
+                            cid = existing.cid,
+                            date = existing.date,
+                            label = label
+                        )
                     )
                 } else {
                     Log.d("InputEntryViewModel", "add amount $amount to category $currentId")
@@ -91,6 +93,7 @@ class InputEntryViewModel @Inject constructor(
                             amount = amount,
                             cid = id,
                             date = ZonedDateTime.now(),
+                            label = label,
                         )
                     )
                 }

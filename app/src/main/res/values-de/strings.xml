@@ -21,6 +21,8 @@
     <string name="operation_next">Nächster</string>
     <string name="operation_today">Heute</string>
     <string name="label_amount">Betrag</string>
+    <string name="label_no_budget">Kein Budget für Monat</string>
+    <string name="label_label">Beschreibung</string>
     <string name="notify_user_created">Benutzer angelegt</string>
     <string name="notify_user_creation_error">Benutzer konnte nicht angelegt werden, Nutzername evtl vergeben</string>
     <string name="welcome">Willkommen</string>

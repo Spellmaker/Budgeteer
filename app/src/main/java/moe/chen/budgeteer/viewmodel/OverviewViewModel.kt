@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import moe.chen.budgeteer.room.BudgetEntryDao
 import moe.chen.budgeteer.room.Category
+import moe.chen.budgeteer.room.CategoryBudgetDao
 import moe.chen.budgeteer.room.CategoryDao
 import java.time.ZonedDateTime
 import javax.inject.Inject
@@ -18,6 +19,7 @@ import javax.inject.Inject
 class OverviewViewModel @Inject constructor(
     private val categoryDao: CategoryDao,
     private val entryDao: BudgetEntryDao,
+    private val categoryBudgetDao: CategoryBudgetDao,
 ) : ViewModel() {
 
     private val _categories = MutableStateFlow<List<Category>>(emptyList())
@@ -39,6 +41,9 @@ class OverviewViewModel @Inject constructor(
 
     fun categoryEntryFlow(category: Category, month: ZonedDateTime) =
         entryDao.listEntries(category.cid!!, month.monthValue, month.year)
+
+    fun categoryBudgetFlow(category: Category, month: ZonedDateTime) =
+        categoryBudgetDao.getActiveBudget(category.cid!!, month.year, month.monthValue)
 
     fun saveCategories(categories: List<Category>) {
         viewModelScope.launch { categoryDao.updateCategories(categories) }

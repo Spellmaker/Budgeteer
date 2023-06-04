@@ -22,6 +22,7 @@ import androidx.navigation.NavController
 import moe.chen.budgeteer.R
 import moe.chen.budgeteer.formatCompact
 import moe.chen.budgeteer.navigation.BudgeteerScreens
+import moe.chen.budgeteer.room.CategoryBudget
 import moe.chen.budgeteer.viewmodel.AddCategoryViewModel
 import moe.chen.budgeteer.viewmodel.UserSettingViewModel
 import moe.chen.budgeteer.widgets.MainViewWidget
@@ -35,14 +36,21 @@ fun EditCategoryScreen(
     val settingsModel = hiltViewModel<UserSettingViewModel>()
     val convertDefault = settingsModel.converterDefault.collectAsState()
     val existingCategory = viewModel.category.collectAsState()
+    val existingCategoryBudget = existingCategory.value?.let { viewModel.getBudget(it)
+        .collectAsState(
+            initial = CategoryBudget(id = -1, budget = -1.0, cid = -1, year = -1, month = -1)
+        )
+    }
 
     var currencyIsError by remember { mutableStateOf(false) }
-    if (existingCategory.value == viewModel.invalidCategory) {
+    if (existingCategory.value == viewModel.invalidCategory
+        || existingCategoryBudget?.value?.id == -1) {
         return
     }
 
     val label = remember { mutableStateOf(existingCategory.value?.label ?: "") }
-    val budget = remember { mutableStateOf<Double?>(existingCategory.value?.budget ?: 0.0) }
+    val budget = remember { mutableStateOf<Double?>(existingCategoryBudget
+        ?.value?.budget ?: 0.0) }
     var budgetString by remember { mutableStateOf(formatCompact(budget.value!!)) }
 
     val context = LocalContext.current
@@ -67,6 +75,7 @@ fun EditCategoryScreen(
                 if (existingCategory.value == null) {
                     viewModel.addCategory(label.value, budget.value!!, 0, handler)
                 } else {
+                    viewModel.updateOrSetBudget(existingCategoryBudget?.value, budget.value!!)
                     viewModel.updateCategory(
                         existingCategory.value!!.cid!!,
                         existingCategory.value!!.uid,

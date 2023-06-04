@@ -16,6 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -25,7 +26,12 @@ import moe.chen.budgeteer.room.BudgetEntry
 import moe.chen.budgeteer.viewmodel.CategoryDetailViewModel
 import moe.chen.budgeteer.viewmodel.UserSettingViewModel
 import moe.chen.budgeteer.widgets.MainViewWidget
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+
+private val dateFormatter = DateTimeFormatter.ofPattern(
+    "yyyy-MM-dd @ HH:mm"
+)
 
 @Composable
 fun CategoryDetailsScreen(
@@ -112,17 +118,24 @@ fun CategoryDetailsScreen(
 }
 
 @Composable
+@Preview(showBackground = true)
 fun ExpenseWidget(
-    item: BudgetEntry,
-    onEdit: () -> Unit,
-    onDelete: () -> Unit,
-    formatter: @Composable (Double) -> String,
+    item: BudgetEntry = BudgetEntry(
+        bid = 0,
+        amount = 10.0,
+        cid = 0,
+        date = ZonedDateTime.now(),
+        label = "Eine lange Schlange"
+    ),
+    onEdit: () -> Unit = {},
+    onDelete: () -> Unit = {},
+    formatter: @Composable (Double) -> String = { it.toString() },
 ) {
     Card(
         modifier = Modifier
             .padding(4.dp)
             .fillMaxWidth()
-            .height(40.dp),
+            .height(60.dp),
         shape = RoundedCornerShape(corner = CornerSize(14.dp)),
         elevation = 4.dp,
     ) {
@@ -131,7 +144,8 @@ fun ExpenseWidget(
                 .fillMaxWidth()
                 .padding(5.dp)
                 .clickable(onClick = onEdit),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 Icons.Rounded.Delete,
@@ -142,12 +156,17 @@ fun ExpenseWidget(
                     )
                     .clickable(onClick = onDelete),
             )
-            Text(
-                DateTimeFormatter.ISO_ZONED_DATE_TIME.format(item.date),
-                modifier = Modifier.padding(
-                    PaddingValues(horizontal = 10.dp)
+            Column(modifier = Modifier) {
+                Text(
+                    item.label ?: "",
+                    modifier = Modifier
                 )
-            )
+                Text(
+                    dateFormatter.format(item.date.toLocalDateTime()),
+                    //DateTimeFormatter.ISO_ZONED_DATE_TIME.format(item.date),
+                    modifier = Modifier
+                )
+            }
             Text(
                 formatter(item.amount),
                 modifier = Modifier.padding(

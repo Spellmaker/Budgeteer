@@ -38,7 +38,8 @@ fun InputEntryScreen(
         return
     }
 
-    var amountDouble by remember { mutableStateOf(existingEntry.value?.amount ?: 0.0) }
+    var amountDouble by remember { mutableDoubleStateOf(existingEntry.value?.amount ?: 0.0) }
+    var entryLabel by remember { mutableStateOf(existingEntry.value?.label ?: "") }
     val category = model.category.collectAsState()
     var amountString by remember {
         mutableStateOf<String>(
@@ -53,6 +54,8 @@ fun InputEntryScreen(
             InputWidget(
                 category = category.value,
                 amount = amountString,
+                entryLabel = entryLabel,
+                setLabel = { entryLabel = it },
                 setAmount = {
                     Log.d("InputEntryScreen", "changing to string $it")
                     amountString = it
@@ -77,7 +80,7 @@ fun InputEntryScreen(
                 },
                 createEntry = {
                     if (isValid) {
-                        model.addOrModifyEntry(amountDouble)
+                        model.addOrModifyEntry(amountDouble, entryLabel)
                         navController.popBackStack()
                     }
                 },
@@ -93,9 +96,11 @@ fun InputEntryScreen(
 @Preview(showBackground = true)
 @Composable
 fun InputWidget(
-    category: Category? = Category(null, "test", 0.0, 0, null),
+    category: Category? = Category(null, "test", 0, null),
     isValid: Boolean = true,
     amount: String = "0.0",
+    entryLabel: String = "a label",
+    setLabel: (String) -> Unit = {},
     setAmount: (String) -> Unit = {},
     changeAmount: (Double) -> Unit = {},
     createEntry: () -> Unit = {},
@@ -132,6 +137,20 @@ fun InputWidget(
                         createEntry()
                     }
                 })
+            )
+        }
+        Row {
+            TextField(
+                value = entryLabel,
+                onValueChange = setLabel,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp),
+                label = { Text(stringResource(R.string.label_label)) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Decimal
+                ),
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
