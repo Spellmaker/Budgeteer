@@ -29,6 +29,7 @@ import java.time.format.DateTimeFormatter
 fun MonthSelector(
     onMonthChange: (ZonedDateTime) -> Unit = {},
     currentMonth: ZonedDateTime = ZonedDateTime.now(),
+    debugHook: () -> Unit = {},
 ) {
     val formatter by remember { mutableStateOf(DateTimeFormatter.ofPattern("MM/yyyy")) }
 
@@ -38,6 +39,9 @@ fun MonthSelector(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
+        /* Button(onClick = debugHook) {
+            Text("Debug")
+        } */
         Button(
             modifier = Modifier.padding(5.dp),
             onClick = { onMonthChange(currentMonth.minusMonths(1)) }) {

@@ -18,6 +18,10 @@ val MIGRATION_5_6 = object : Migration(5, 6) {
             (`id` INTEGER, `budget` REAL NOT NULL, `cid` INTEGER NOT NULL, `year` INTEGER NOT NULL, `month` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`cid`) REFERENCES `Category`(`cid`) ON UPDATE NO ACTION ON DELETE CASCADE )
         """.trimIndent())
 
+        database.execSQL("""
+            CREATE INDEX IF NOT EXISTS `foreign_category_id` ON `CategoryBudget` (`cid`)
+        """.trimIndent())
+
         Log.d("migration", "Created table")
 
         database.query(

@@ -52,4 +52,7 @@ interface CategoryBudgetDao {
 
     @Update
     suspend fun updateBudget(budget: CategoryBudget)
+
+    @Query("""SELECT * FROM categorybudget WHERE cid = :categoryId""")
+    fun listBudgets(categoryId: Int): Flow<List<CategoryBudget>>
 }

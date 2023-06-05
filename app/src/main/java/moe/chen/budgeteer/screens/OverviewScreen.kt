@@ -99,7 +99,8 @@ fun OverviewScreen(
             onSaveCategories = { categoriesToSave ->
                 model.saveCategories(categoriesToSave)
             },
-            onChangeMonth = { month -> selectedMonth = month }
+            onChangeMonth = { month -> selectedMonth = month },
+            debugHook = { model.debug() }
         )
     }
 }
@@ -121,6 +122,7 @@ fun OverviewWidget(
     formatter: @Composable (Double) -> String,
     onSaveCategories: (List<Category>) -> Unit,
     onChangeMonth: (ZonedDateTime) -> Unit,
+    debugHook: () -> Unit,
 ) {
     MainViewWidget(
         navController = navController,
@@ -168,6 +170,7 @@ fun OverviewWidget(
                             MonthSelector(
                                 onMonthChange = onChangeMonth,
                                 currentMonth = selectedMonth,
+                                debugHook = debugHook
                             )
                             CategoryListWidget(
                                 padding,
@@ -417,7 +420,7 @@ fun CategoryRow(
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .fillMaxWidth(0.5f)
+                    .fillMaxWidth(0.45f)
                     .padding(20.dp),
                 verticalArrangement = Arrangement.Center,
             ) {

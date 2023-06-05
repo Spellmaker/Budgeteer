@@ -56,62 +56,67 @@ fun CategoryDetailsScreen(
                     .fillMaxHeight()
                     .padding(5.dp)
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        category.value?.label ?: "null",
-                        modifier = Modifier.padding(5.dp),
-                        style = MaterialTheme.typography.h6
-                    )
-                }
-                Spacer(modifier = Modifier.height(10.dp))
-                LazyColumn {
-                    items(items = entries.value.sortedByDescending { it.date }) {
-                        ExpenseWidget(
-                            item = it,
-                            onEdit = { navController.navigate(
-                                BudgeteerScreens.ExpenseInputScreen.name + "/${it.cid}/${
-                                    it.bid
-                                }"
-                            )},
-                            onDelete = { model.removeEntry(it) },
-                            formatter = { n -> convertDefault.value?.format(n) ?: n.toString() })
-                    }
-                }
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth()
-                        .padding(10.dp),
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        FloatingActionButton(onClick = { navController.popBackStack() }) {
-                            Icon(
-                                Icons.Rounded.ArrowBack,
-                                contentDescription = stringResource(R.string.operation_cancel)
+                Scaffold(
+                    content = { padding ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                category.value?.label ?: "null",
+                                modifier = Modifier.padding(5.dp),
+                                style = MaterialTheme.typography.h6
                             )
                         }
-                        FloatingActionButton(onClick = {
-                            navController.navigate(
-                                BudgeteerScreens.AddCategoryScreen.name +
-                                        "/0/${category.value?.cid}"
-                            )
-                        }) {
-                            Icon(
-                                Icons.Rounded.Edit,
-                                contentDescription = stringResource(R.string.operation_edit)
-                            )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        LazyColumn {
+                            items(items = entries.value.sortedByDescending { it.date }) {
+                                ExpenseWidget(
+                                    item = it,
+                                    onEdit = { navController.navigate(
+                                        BudgeteerScreens.ExpenseInputScreen.name + "/${it.cid}/${
+                                            it.bid
+                                        }"
+                                    )},
+                                    onDelete = { model.removeEntry(it) },
+                                    formatter = { n -> convertDefault.value?.format(n) ?: n.toString() })
+                            }
+                        }
+                    },
+                    bottomBar = {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .fillMaxWidth()
+                                .padding(10.dp),
+                            verticalArrangement = Arrangement.Bottom
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                FloatingActionButton(onClick = { navController.popBackStack() }) {
+                                    Icon(
+                                        Icons.Rounded.ArrowBack,
+                                        contentDescription = stringResource(R.string.operation_cancel)
+                                    )
+                                }
+                                FloatingActionButton(onClick = {
+                                    navController.navigate(
+                                        BudgeteerScreens.AddCategoryScreen.name +
+                                                "/0/${category.value?.cid}"
+                                    )
+                                }) {
+                                    Icon(
+                                        Icons.Rounded.Edit,
+                                        contentDescription = stringResource(R.string.operation_edit)
+                                    )
+                                }
+                            }
                         }
                     }
-                }
+                )
             }
         }
     }
