@@ -19,6 +19,9 @@
     <string name="operation_submit">Submit</string>
     <string name="operation_cancel">Cancel</string>
     <string name="label_amount">Amount</string>
+    <string name="label_export">Export Data to csv</string>
+    <string name="error_export">Could not export data</string>
+    <string name="label_export_success">Exported data successfully</string>
     <string name="notify_user_created">User created successfully</string>
     <string name="notify_user_creation_error">User was not created, maybe username is already taken</string>
     <string name="welcome">Welcome to Budgeteer</string>

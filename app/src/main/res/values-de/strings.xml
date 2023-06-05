@@ -21,6 +21,9 @@
     <string name="operation_next">Nächster</string>
     <string name="operation_today">Heute</string>
     <string name="label_amount">Betrag</string>
+    <string name="label_export">Daten nach CSV exportieren</string>
+    <string name="error_export">Daten konnten nicht exportiert werden</string>
+    <string name="label_export_success">Export erfolgreich</string>
     <string name="label_no_budget">Kein Budget für Monat</string>
     <string name="label_label">Beschreibung</string>
     <string name="notify_user_created">Benutzer angelegt</string>
