@@ -38,7 +38,7 @@ interface CategoryBudgetDao {
         SELECT * FROM categorybudget
         WHERE cid = :categoryId AND
         (year < :year OR (year = :year AND month <= :month))
-        ORDER BY year, month DESC
+        ORDER BY year DESC, month DESC
         LIMIT 1
     """)
     fun getActiveBudget(
