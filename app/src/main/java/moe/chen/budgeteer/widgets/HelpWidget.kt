@@ -7,8 +7,12 @@ import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Help
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.automirrored.rounded.Help
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -24,7 +28,7 @@ fun HelpWidget(
     var isOpen by remember { mutableStateOf(false) }
 
     Button(onClick = { isOpen = true }, modifier = Modifier.padding(2.dp)) {
-        Icon(Icons.Rounded.Help, stringResource(R.string.operation_help))
+        Icon(Icons.AutoMirrored.Rounded.Help, stringResource(R.string.operation_help))
     }
 
     if (isOpen) {

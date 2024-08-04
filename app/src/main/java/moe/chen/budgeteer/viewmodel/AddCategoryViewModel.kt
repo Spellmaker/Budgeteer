@@ -125,7 +125,7 @@ class AddCategoryViewModel @Inject constructor(
                         cid = id,
                         label = name,
                         uid = user,
-                        order = order
+                        order = order,
                     )
                 )
                 callback(true)

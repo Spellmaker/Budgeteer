@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
             parentColumns = ["uid"],
             childColumns = ["uid"],
             onDelete = ForeignKey.CASCADE,
-        )
+        ),
     ],
     indices = [
         Index(
