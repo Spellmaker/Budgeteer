@@ -31,8 +31,8 @@ android {
         applicationId "moe.chen.budgeteer"
         minSdk 26
         targetSdk 35
-        versionCode 16
-        versionName "alpha-0.16"
+        versionCode 17
+        versionName "alpha-0.17"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
